@@ -11,6 +11,8 @@
 #include<Curve.h>
 #include<Polygon.h>
 #include<Rectangle.h>
+#include <vector>
+#include <Toolbar.h>
 
 // SDL stuff
 SDL_Window* pWindow = nullptr;
@@ -19,9 +21,17 @@ SDL_Surface * window_surface = nullptr;
 
 int offset = 10;
 
-void display()
+std::vector<Shape*> shapes; //lista de formas
+
+void display(Toolbar& toolbar)
 {
-    // Os desenhos e transformações abaixo são apenas exemplos para testar
+    for(Shape* s : shapes) {
+       if(s != nullptr) s->draw();
+    }
+
+    toolbar.render();
+
+    /*// Os desenhos e transformações abaixo são apenas exemplos para testar
     // as classes. O próximo passo é substituir essas chamadas fixas por
     // interações com o mouse, permitindo selecionar uma figura e aplicar
     // translação, escala e rotação através dos comandos do usuário.
@@ -72,7 +82,7 @@ void display()
     cir.draw();
     cur.draw();
     pol.draw();
-    rect.draw();
+    rect.draw();*/
 
     // Codigo que veio do professor (pode ser util)
     /*
@@ -140,6 +150,8 @@ int main(int argc, char* args[])
 	else
 		return 1; // sdl could not initialize
 
+    Toolbar toolbar(640, 40);
+
 	while (1)
 	{
 
@@ -147,7 +159,7 @@ int main(int argc, char* args[])
         clear();
 
         // Realiza o desenho
-        display();
+        display(toolbar);
 
         // Aguarda instantes
         usleep(100000);
@@ -155,10 +167,20 @@ int main(int argc, char* args[])
 		// Verifica se foi mandado fechar a janela
 		while (SDL_PollEvent(&event))
         {
+
             if (event.type == SDL_QUIT)
             {
                 exit(0);
             }
+
+            bool clickedUI = toolbar.handleEvent(event);
+
+           /*adiiconar depois
+             Se clickedUI for falso, o clique ocorreu na área livre
+             utilizar toolbar.getCurrentTool() p identificar a ferramenta ativa
+             e instanciar dinamicamente os objetos
+             salvando os ponteiros no vetor 'shapes'
+             */
 
         }
 
