@@ -571,12 +571,12 @@
 	"Color.h"
 	<list>
 
-1787970619 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\circle.cpp
+1787973174 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\circle.cpp
 	"Circle.h"
 	"Context.h"
 	"Line.h"
 
-1787967335 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\circle.h
+1787973174 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\circle.h
 	"Point.h"
 	"Color.h"
 	"Shape.h"
@@ -589,7 +589,7 @@
 1787876156 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\context.h
 	<SDL2/SDL.h>
 
-1787966548 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\line.h
+1787973174 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\line.h
 	<Point.h>
 	<Color.h>
 	<SDL2/SDL.h>
@@ -602,18 +602,18 @@
 1787876156 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\context.cpp
 	"Context.h"
 
-1787971003 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\curve.cpp
+1787973174 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\curve.cpp
 	"Curve.h"
 	"Line.h"
 	"Transform.h"
 	<cmath>
 
-1787971125 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\curve.h
+1787973174 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\curve.h
 	<Point.h>
 	<Color.h>
 	"Shape.h"
 
-1787968299 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\line.cpp
+1788072809 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\line.cpp
 	"Line.h"
 	"Context.h"
 	"Transform.h"
@@ -622,13 +622,13 @@
 1787876156 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\point.cpp
 	"Point.h"
 
-1787968543 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\polygon.cpp
+1787973174 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\polygon.cpp
 	"Polygon.h"
 	"Context.h"
 	"Line.h"
 	"Transform.h"
 
-1787966539 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\polygon.h
+1787973174 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\polygon.h
 	"Point.h"
 	"Color.h"
 	"Shape.h"
@@ -646,24 +646,28 @@
 	"Color.h"
 	"Shape.h"
 
-1787967167 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\transform.cpp
+1787971256 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\transform.cpp
 	"Transform.h"
 	"Context.h"
 	"Line.h"
 	<cmath>
 
-1787971063 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
+1788076346 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
 	<SDL2/SDL.h>
 	<stdio.h>
 	<unistd.h>
-	<Context.h>
-	<Color.h>
-	<Point.h>
-	<Line.h>
-	<Circle.h>
-	<Curve.h>
-	<Polygon.h>
-	<Rectangle.h>
+	<cmath>
+	"Context.h"
+	"Color.h"
+	"Point.h"
+	"Line.h"
+	"Circle.h"
+	"Curve.h"
+	"Polygon.h"
+	"Rectangle.h"
+	"Shape.h"
+	"Toolbar.h"
+	"Canvas.h"
 
 1787970536 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\shape.h
 
@@ -671,5 +675,24 @@
 	"Point.h"
 
 1787967862 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\shape.cpp
+	"Shape.h"
+
+1788069859 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\toolbar.h
+	<vector>
+	<SDL2/SDL.h>
+	"Rectangle.h"
+	"Color.h"
+
+1788069859 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\toolbar.cpp
+	"Toolbar.h"
+
+1788070748 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\canvas.cpp
+	"Canvas.h"
+	"Context.h"
+	"Line.h"
+
+1788070706 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\canvas.h
+	<vector>
+	<SDL2/SDL.h>
 	"Shape.h"
 

@@ -52,11 +52,28 @@ void Line::setPixel(int x, int y, int r, int g, int b) {
     setPixel(x, y, r, g, b, 255);
 }
 
-void Line::setPixel(int x, int y, int r, int g, int b, int a) {
-    unsigned int * pixels;
-    SDL_Surface * window_surface = Context::getInstance()->getWindowSurface();
-    pixels = (unsigned int *) window_surface->pixels;
-    pixels[x + y * window_surface->w] = SDL_MapRGBA(window_surface->format, r, g, b, a);
+// Pixels tiveram que ser ignorados para nao acessar uma posicao
+// invalida da memoria resultando em segmentation fault (crash)
+void Line::setPixel(int x, int y, int r, int g, int b, int a)
+{
+    SDL_Surface* window_surface =
+        Context::getInstance()->getWindowSurface();
+
+    // Ignora pixels que estejam fora dos limites da janela
+    if (x < 0 || x >= window_surface->w ||
+        y < 0 || y >= window_surface->h)
+    {
+        return;
+    }
+
+    unsigned int* pixels =
+        (unsigned int*)window_surface->pixels;
+
+    pixels[x + y * window_surface->w] =
+        SDL_MapRGBA(
+            window_surface->format,
+            r, g, b, a
+        );
 }
 
 void Line::draw() {

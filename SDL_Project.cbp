@@ -42,6 +42,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/Canvas.h" />
 		<Unit filename="include/Circle.h" />
 		<Unit filename="include/Color.h" />
 		<Unit filename="include/Context.h" />
@@ -51,8 +52,10 @@
 		<Unit filename="include/Polygon.h" />
 		<Unit filename="include/Rectangle.h" />
 		<Unit filename="include/Shape.h" />
+		<Unit filename="include/Toolbar.h" />
 		<Unit filename="include/Transform.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Canvas.cpp" />
 		<Unit filename="src/Circle.cpp" />
 		<Unit filename="src/Color.cpp" />
 		<Unit filename="src/Context.cpp" />
@@ -61,6 +64,7 @@
 		<Unit filename="src/Point.cpp" />
 		<Unit filename="src/Polygon.cpp" />
 		<Unit filename="src/Rectangle.cpp" />
+		<Unit filename="src/Toolbar.cpp" />
 		<Unit filename="src/Transform.cpp" />
 		<Extensions />
 	</Project>
