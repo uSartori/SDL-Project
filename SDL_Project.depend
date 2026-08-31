@@ -613,7 +613,7 @@
 	<Color.h>
 	"Shape.h"
 
-1788072809 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\line.cpp
+1788137810 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\line.cpp
 	"Line.h"
 	"Context.h"
 	"Transform.h"
@@ -652,11 +652,12 @@
 	"Line.h"
 	<cmath>
 
-1788076346 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
+1788141213 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
 	<SDL2/SDL.h>
 	<stdio.h>
 	<unistd.h>
 	<cmath>
+	<list>
 	"Context.h"
 	"Color.h"
 	"Point.h"

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <cmath>
+#include <list>
 
 #include "Context.h"
 #include "Color.h"
@@ -23,8 +24,13 @@ SDL_Renderer* pRenderer = nullptr;
 SDL_Surface* window_surface = nullptr;
 
 int offset = 10;
+
+// Controle da curva
 Point curvePoints[4];
 int curvePointCount = 0;
+
+// Controle do polígono
+list<Point> polygonPoints;
 
 // Controle temporário do desenho da linha
 bool drawing = false;
@@ -48,6 +54,7 @@ void display(Canvas& canvas, Toolbar& toolbar)
 
         preview.draw();
     }
+
     // Aparece a preview do retangulo conforme o usuario move o mouse
     if (drawing && toolbar.getCurrentTool() == TOOL_RECTANGLE)
     {
@@ -59,6 +66,7 @@ void display(Canvas& canvas, Toolbar& toolbar)
 
         preview.draw();
     }
+
     // Aparece a preview do circulo conforme o usuario move o mouse
     if (drawing && toolbar.getCurrentTool() == TOOL_CIRCLE)
     {
@@ -76,20 +84,30 @@ void display(Canvas& canvas, Toolbar& toolbar)
 
         preview.draw();
     }
-}
+    // Mostra as linhas do poligono conforme os pontos sao adicionados
+    if (toolbar.getCurrentTool() == TOOL_POLYGON && polygonPoints.size() >= 2){
 
-void clear()
-{
-    Line line;
+        Line line;
+        Point anterior = polygonPoints.front();
 
-    SDL_Surface* window_surface =
-        Context::getInstance()->getWindowSurface();
+        int i = 0;
 
-    for (int x = 0; x < window_surface->w; x++)
-    {
-        for (int y = 0; y < window_surface->h; y++)
+        for (Point ponto : polygonPoints)
         {
-            line.setPixel(x, y, 255, 255, 255);
+            if (i > 0)
+            {
+                line.drawWuLine(
+                    anterior.getX(),
+                    anterior.getY(),
+                    ponto.getX(),
+                    ponto.getY(),
+                    Color(0, 0, 0)
+                );
+
+                anterior = ponto;
+            }
+
+            i++;
         }
     }
 }
@@ -98,8 +116,10 @@ int main(int argc, char* args[])
 {
     SDL_Event event;
 
+    // Inicializa o SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
     {
+        // Cria a janela
         pWindow = SDL_CreateWindow(
             "SDL_Classes",
             SDL_WINDOWPOS_CENTERED,
@@ -119,6 +139,7 @@ int main(int argc, char* args[])
 
             window_surface = SDL_GetWindowSurface(pWindow);
 
+            // Inicializa o contexto grafico da aplicacao
             Context* context = Context::getInstance();
 
             context->setRenderer(pRenderer);
@@ -138,7 +159,7 @@ int main(int argc, char* args[])
         // Limpa a tela
         canvas.clear();
 
-        // Desenha Canvas, pré-visualização e Toolbar
+        // Realiza o desenho
         display(canvas, toolbar);
 
         while (SDL_PollEvent(&event))
@@ -146,48 +167,49 @@ int main(int argc, char* args[])
             // Fecha a janela
             if (event.type == SDL_QUIT)
             {
+                SDL_Quit();
                 return 0;
             }
 
             // Primeiro deixa a Toolbar tratar o evento
             bool clickedUI = toolbar.handleEvent(event);
 
-            // Se o evento pertence à Toolbar, ignora o restante
+            // Se o evento pertence a Toolbar, ignora o restante
             if (clickedUI)
             {
+                drawing = false;
                 continue;
             }
-            // Se o evento não pertence à Toolbar, trata o Canvas
+
+            // Se o evento nao pertence a Toolbar, trata o Canvas
             if (!clickedUI)
             {
                 // Mouse pressionado
                 if (event.type == SDL_MOUSEBUTTONDOWN &&
                     event.button.button == SDL_BUTTON_LEFT)
                 {
-                    // Criação de uma figura que precise de dois pontos para ser criada
+                    Point clickPoint(
+                        event.button.x,
+                        event.button.y
+                    );
+
+                    // Criacao de uma figura que precise de dois pontos para ser criada
                     if (toolbar.getCurrentTool() == TOOL_LINE
                         || toolbar.getCurrentTool() == TOOL_RECTANGLE
                         || toolbar.getCurrentTool() == TOOL_CIRCLE)
                     {
                         drawing = true;
 
-                        startPoint = Point(
-                            event.button.x,
-                            event.button.y
-                        );
-
-                        currentPoint = startPoint;
+                        startPoint = clickPoint;
+                        currentPoint = clickPoint;
                     }
+
                     // Curva utiliza quatro cliques para definir os quatro pontos
-                    if (toolbar.getCurrentTool() == TOOL_CURVE)
+                    else if (toolbar.getCurrentTool() == TOOL_CURVE)
                     {
                         if (curvePointCount < 4)
                         {
-                            curvePoints[curvePointCount] = Point(
-                                event.button.x,
-                                event.button.y
-                            );
-
+                            curvePoints[curvePointCount] = clickPoint;
                             curvePointCount++;
 
                             // Cria a curva somente depois do quarto clique
@@ -204,7 +226,12 @@ int main(int argc, char* args[])
                             }
                         }
                     }
-                }
+
+                    // Adiciona um ponto ao poligono conforme clique do mouse
+                    else if (toolbar.getCurrentTool() == TOOL_POLYGON)
+                    {
+                        polygonPoints.push_back(clickPoint);
+                    }
                 }
 
                 // Mouse movimentando
@@ -239,13 +266,16 @@ int main(int argc, char* args[])
 
                         drawing = false;
                     }
+
                     // Cria o retangulo quando o usuario soltar o click do mouse
-                    if (toolbar.getCurrentTool() == TOOL_RECTANGLE && drawing)
+                    else if (toolbar.getCurrentTool() == TOOL_RECTANGLE &&
+                             drawing)
                     {
                         Point endPoint(
                             event.button.x,
                             event.button.y
                         );
+
                         Rectangle* rectangle = new Rectangle(
                             startPoint,
                             endPoint,
@@ -256,18 +286,24 @@ int main(int argc, char* args[])
 
                         drawing = false;
                     }
+
                     // Cria o circulo quando o usuario soltar o click do mouse
-                    if (toolbar.getCurrentTool() == TOOL_CIRCLE && drawing)
+                    else if (toolbar.getCurrentTool() == TOOL_CIRCLE &&
+                             drawing)
                     {
                         Point endPoint(
                             event.button.x,
                             event.button.y
                         );
 
-                        double dx = endPoint.getX() - startPoint.getX();
-                        double dy = endPoint.getY() - startPoint.getY();
+                        double dx =
+                            endPoint.getX() - startPoint.getX();
 
-                        double radius = sqrt(dx * dx + dy * dy);
+                        double dy =
+                            endPoint.getY() - startPoint.getY();
+
+                        double radius =
+                            sqrt(dx * dx + dy * dy);
 
                         Circle* circle = new Circle(
                             startPoint,
@@ -279,11 +315,31 @@ int main(int argc, char* args[])
 
                         drawing = false;
                     }
-                    // A curva nao eh criada aqui pois precisa de quatro cliques e nao soltar o click
 
+                    // A curva nao eh criada aqui pois precisa de quatro cliques
+                }
+
+                // Apertar botao direito do mouse completa o poligono
+                if (event.type == SDL_MOUSEBUTTONDOWN &&
+                    event.button.button == SDL_BUTTON_RIGHT)
+                {
+                    if (toolbar.getCurrentTool() == TOOL_POLYGON)
+                    {
+                        if (polygonPoints.size() >= 3)
+                        {
+                            Polygon* polygon = new Polygon(
+                                polygonPoints,
+                                Color(0, 0, 0)
+                            );
+
+                            canvas.addShape(polygon);
+
+                            polygonPoints.clear();
+                        }
+                    }
                 }
             }
-
+        }
 
         // Atualiza a janela
         SDL_UpdateWindowSurface(pWindow);

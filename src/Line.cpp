@@ -17,15 +17,17 @@ Line::Line(Point start, Point end, Color color) {
     this->start = start;
     this->end = end;
     this->color = color;
-    this->antialias = 0;
+    this->antialias = 1;
 }
 
+/*
 Line::Line(Point start, Point end, Color color, int antialias) {
     this->start = start;
     this->end = end;
     this->color = color;
     this->antialias = antialias;
 }
+*/
 
 void Line::setPixel(int x, int y, Uint32 cor) {
 
