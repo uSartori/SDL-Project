@@ -86,7 +86,7 @@
 	<Point.h>
 	<Line.h>
 
-1786387282 c:\sdl2\include\sdl2\sdl.h
+1690990556 c:\sdl2\include\sdl2\sdl.h
 	"SDL_main.h"
 	"SDL_stdinc.h"
 	"SDL_assert.h"
@@ -124,12 +124,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_main.h
+1690990556 c:\sdl2\include\sdl2\sdl_main.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387283 c:\sdl2\include\sdl2\sdl_stdinc.h
+1690990556 c:\sdl2\include\sdl2\sdl_stdinc.h
 	"SDL_config.h"
 	<sys/types.h>
 	<stdio.h>
@@ -161,39 +161,29 @@
 	<stdio.h>
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_config.h
+1690990556 c:\sdl2\include\sdl2\sdl_config.h
 	"SDL_platform.h"
-	"SDL_config_windows.h"
-	"SDL_config_winrt.h"
-	"SDL_config_wingdk.h"
-	"SDL_config_xbox.h"
-	"SDL_config_macosx.h"
-	"SDL_config_iphoneos.h"
-	"SDL_config_android.h"
-	"SDL_config_os2.h"
-	"SDL_config_emscripten.h"
-	"SDL_config_ngage.h"
-	"SDL_config_minimal.h"
+	<winsdkver.h>
+	<sdkddkver.h>
 
-1786387283 c:\sdl2\include\sdl2\sdl_platform.h
+1690990556 c:\sdl2\include\sdl2\sdl_platform.h
 	<AvailabilityMacros.h>
-	<TargetConditionals.h>
 	<TargetConditionals.h>
 	<winapifamily.h>
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\begin_code.h
+1690990556 c:\sdl2\include\sdl2\begin_code.h
 
-1786387282 c:\sdl2\include\sdl2\close_code.h
+1690990556 c:\sdl2\include\sdl2\close_code.h
 
-1786387282 c:\sdl2\include\sdl2\sdl_assert.h
+1690990556 c:\sdl2\include\sdl2\sdl_assert.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	<signal.h>
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_atomic.h
+1690990556 c:\sdl2\include\sdl2\sdl_atomic.h
 	"SDL_stdinc.h"
 	"SDL_platform.h"
 	"begin_code.h"
@@ -201,7 +191,7 @@
 	<mbarrier.h>
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_audio.h
+1690990556 c:\sdl2\include\sdl2\sdl_audio.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_endian.h"
@@ -211,28 +201,27 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_error.h
+1690990556 c:\sdl2\include\sdl2\sdl_error.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387283 c:\sdl2\include\sdl2\sdl_endian.h
+1690990556 c:\sdl2\include\sdl2\sdl_endian.h
 	"SDL_stdinc.h"
 	<intrin.h>
 	<endian.h>
-	<sys/byteorder.h>
 	<endian.h>
 	<sys/endian.h>
 	"begin_code.h"
 	"close_code.h"
 
-1786387283 c:\sdl2\include\sdl2\sdl_mutex.h
+1690990556 c:\sdl2\include\sdl2\sdl_mutex.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_thread.h
+1690990556 c:\sdl2\include\sdl2\sdl_thread.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_atomic.h"
@@ -243,18 +232,18 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387283 c:\sdl2\include\sdl2\sdl_rwops.h
+1690990556 c:\sdl2\include\sdl2\sdl_rwops.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_clipboard.h
+1690990556 c:\sdl2\include\sdl2\sdl_clipboard.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_cpuinfo.h
+1690990556 c:\sdl2\include\sdl2\sdl_cpuinfo.h
 	"SDL_stdinc.h"
 	<intrin.h>
 	<intrin.h>
@@ -276,7 +265,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_events.h
+1690990556 c:\sdl2\include\sdl2\sdl_events.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -290,7 +279,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_video.h
+1690990556 c:\sdl2\include\sdl2\sdl_video.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -298,13 +287,13 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_pixels.h
+1690990556 c:\sdl2\include\sdl2\sdl_pixels.h
 	"SDL_stdinc.h"
 	"SDL_endian.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_rect.h
+1690990556 c:\sdl2\include\sdl2\sdl_rect.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_pixels.h"
@@ -312,7 +301,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_surface.h
+1690990556 c:\sdl2\include\sdl2\sdl_surface.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -321,11 +310,11 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_blendmode.h
+1690990556 c:\sdl2\include\sdl2\sdl_blendmode.h
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_keyboard.h
+1690990556 c:\sdl2\include\sdl2\sdl_keyboard.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_keycode.h"
@@ -333,21 +322,21 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_keycode.h
+1690990556 c:\sdl2\include\sdl2\sdl_keycode.h
 	"SDL_stdinc.h"
 	"SDL_scancode.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_scancode.h
+1690990556 c:\sdl2\include\sdl2\sdl_scancode.h
 	"SDL_stdinc.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_mouse.h
+1690990556 c:\sdl2\include\sdl2\sdl_mouse.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_joystick.h
+1690990556 c:\sdl2\include\sdl2\sdl_joystick.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_guid.h"
@@ -355,7 +344,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_gamecontroller.h
+1690990556 c:\sdl2\include\sdl2\sdl_gamecontroller.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_rwops.h"
@@ -364,17 +353,17 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_sensor.h
+1690990556 c:\sdl2\include\sdl2\sdl_sensor.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387283 c:\sdl2\include\sdl2\sdl_quit.h
+1690990556 c:\sdl2\include\sdl2\sdl_quit.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_gesture.h
+1690990556 c:\sdl2\include\sdl2\sdl_gesture.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -382,70 +371,70 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387283 c:\sdl2\include\sdl2\sdl_touch.h
+1690990556 c:\sdl2\include\sdl2\sdl_touch.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_filesystem.h
+1690990556 c:\sdl2\include\sdl2\sdl_filesystem.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_haptic.h
+1690990556 c:\sdl2\include\sdl2\sdl_haptic.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_joystick.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387283 c:\sdl2\include\sdl2\sdl_hidapi.h
+1690990556 c:\sdl2\include\sdl2\sdl_hidapi.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_hints.h
+1690990556 c:\sdl2\include\sdl2\sdl_hints.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_loadso.h
+1690990556 c:\sdl2\include\sdl2\sdl_loadso.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387283 c:\sdl2\include\sdl2\sdl_log.h
+1690990556 c:\sdl2\include\sdl2\sdl_log.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387283 c:\sdl2\include\sdl2\sdl_messagebox.h
+1690990556 c:\sdl2\include\sdl2\sdl_messagebox.h
 	"SDL_stdinc.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_metal.h
+1690990556 c:\sdl2\include\sdl2\sdl_metal.h
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_power.h
+1690990556 c:\sdl2\include\sdl2\sdl_power.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_render.h
+1690990556 c:\sdl2\include\sdl2\sdl_render.h
 	"SDL_stdinc.h"
 	"SDL_rect.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_shape.h
+1690990556 c:\sdl2\include\sdl2\sdl_shape.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -454,7 +443,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_system.h
+1690990556 c:\sdl2\include\sdl2\sdl_system.h
 	"SDL_stdinc.h"
 	"SDL_keyboard.h"
 	"SDL_render.h"
@@ -462,24 +451,24 @@
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_timer.h
+1690990556 c:\sdl2\include\sdl2\sdl_timer.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_version.h
+1690990556 c:\sdl2\include\sdl2\sdl_version.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_locale.h
+1690990556 c:\sdl2\include\sdl2\sdl_locale.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1786387282 c:\sdl2\include\sdl2\sdl_misc.h
+1690990556 c:\sdl2\include\sdl2\sdl_misc.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
@@ -519,7 +508,7 @@
 	<Curve.h>
 	<Polygon.h>
 
-1786387283 c:\sdl2\include\sdl2\sdl_guid.h
+1690990556 c:\sdl2\include\sdl2\sdl_guid.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
@@ -582,9 +571,8 @@
 	"Color.h"
 	<list>
 
-1787973174 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\circle.cpp
+1788209572 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\circle.cpp
 	"Circle.h"
-	"Context.h"
 	"Line.h"
 
 1787973174 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\circle.h
@@ -597,7 +585,7 @@
 1787876156 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\color.h
 	<SDL2/SDL.h>
 
-1787876156 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\context.h
+1788203969 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\context.h
 	<SDL2/SDL.h>
 
 1787973174 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\line.h
@@ -610,7 +598,7 @@
 	"Color.h"
 	"Context.h"
 
-1787876156 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\context.cpp
+1788209676 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\context.cpp
 	"Context.h"
 
 1787973174 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\curve.cpp
@@ -624,7 +612,7 @@
 	<Color.h>
 	"Shape.h"
 
-1788137810 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\line.cpp
+1788205372 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\line.cpp
 	"Line.h"
 	"Context.h"
 	"Transform.h"
@@ -663,7 +651,7 @@
 	"Line.h"
 	<cmath>
 
-1788141213 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
+1788209362 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
 	<SDL2/SDL.h>
 	<stdio.h>
 	<unistd.h>
@@ -680,6 +668,7 @@
 	"Shape.h"
 	"Toolbar.h"
 	"Canvas.h"
+	"FloodFill.h"
 
 1787970536 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\shape.h
 
@@ -695,18 +684,26 @@
 	"Rectangle.h"
 	"Color.h"
 
-1788069859 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\toolbar.cpp
+1788207749 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\toolbar.cpp
 	"Toolbar.h"
+	"Line.h"
+	"Circle.h"
+	"Curve.h"
+	"Polygon.h"
+	"Context.h"
 
-1788070748 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\canvas.cpp
+1788209477 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\canvas.cpp
 	"Canvas.h"
 	"Context.h"
 	"Line.h"
+	"FloodFill.h"
 
-1788070706 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\canvas.h
+1788207176 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\canvas.h
 	<vector>
 	<SDL2/SDL.h>
 	"Shape.h"
+	"Point.h"
+	"Color.h"
 
 1788195010 source:c:\users\mileba\downloads\sdl-project\main.cpp
 	<SDL2/SDL.h>
@@ -872,4 +869,14 @@
 	"Context.h"
 	"Line.h"
 	<cmath>
+
+1788209963 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\floodfill.cpp
+	"FloodFill.h"
+	"Context.h"
+	<stack>
+
+1788209959 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\floodfill.h
+	<SDL2/SDL.h>
+	"Color.h"
+	"Point.h"
 

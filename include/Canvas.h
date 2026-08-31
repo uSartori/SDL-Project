@@ -3,7 +3,10 @@
 
 #include <vector>
 #include <SDL2/SDL.h>
+
 #include "Shape.h"
+#include "Point.h"
+#include "Color.h"
 
 class Canvas
 {
@@ -12,16 +15,30 @@ public:
     ~Canvas();
 
     void addShape(Shape* shape);
+    void addFloodFill(Point startPoint, Color newColor);
+
     void draw();
     void clear();
+
+    bool isInside(int x, int y) const;
 
     std::vector<Shape*>& getShapes();
 
 private:
+    struct Fill
+    {
+        Point point;
+        Color color;
+    };
+
     int width;
     int height;
 
+    int x;
+    int y;
+
     std::vector<Shape*> shapes;
+    std::vector<Fill> fills;
 };
 
 #endif // CANVAS_H

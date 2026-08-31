@@ -17,19 +17,13 @@
 #include "Shape.h"
 #include "Toolbar.h"
 #include "Canvas.h"
-
-// SDL
-SDL_Window* pWindow = nullptr;
-SDL_Renderer* pRenderer = nullptr;
-SDL_Surface* window_surface = nullptr;
-
-int offset = 10;
+#include "FloodFill.h"
 
 // Controle da curva
 Point curvePoints[4];
 int curvePointCount = 0;
 
-// Controle do polígono
+// Controle do poligono
 list<Point> polygonPoints;
 
 // Controle temporário do desenho da linha
@@ -40,7 +34,11 @@ Point currentPoint;
 // Desenha o conteúdo do Canvas e a interface
 void display(Canvas& canvas, Toolbar& toolbar)
 {
-    toolbar.render();
+    Context* context = Context::getInstance();
+
+    // Desenha somente dentro do Canvas
+    context->setViewport(0, 40, 640, 440);
+
     canvas.draw();
 
     // Aparece a preview da linha conforme o usuario move o mouse
@@ -84,9 +82,11 @@ void display(Canvas& canvas, Toolbar& toolbar)
 
         preview.draw();
     }
-    // Mostra as linhas do poligono conforme os pontos sao adicionados
-    if (toolbar.getCurrentTool() == TOOL_POLYGON && polygonPoints.size() >= 2){
 
+    // Mostra as linhas do poligono conforme os pontos sao adicionados
+    if (toolbar.getCurrentTool() == TOOL_POLYGON &&
+        polygonPoints.size() >= 2)
+    {
         Line line;
         Point anterior = polygonPoints.front();
 
@@ -110,10 +110,19 @@ void display(Canvas& canvas, Toolbar& toolbar)
             i++;
         }
     }
+
+    // Permite que a Toolbar desenhe em toda a parte superior
+    context->setViewport(0, 0, 640, 40);
+
+    toolbar.render();
 }
 
-int main(int argc, char* args[])
+int main()
 {
+    // SDL
+    SDL_Window* pWindow = nullptr;
+    SDL_Renderer* pRenderer = nullptr;
+    SDL_Surface* window_surface = nullptr;
     SDL_Event event;
 
     // Inicializa o SDL
@@ -174,13 +183,6 @@ int main(int argc, char* args[])
             // Primeiro deixa a Toolbar tratar o evento
             bool clickedUI = toolbar.handleEvent(event);
 
-            // Se o evento pertence a Toolbar, ignora o restante
-            if (clickedUI)
-            {
-                drawing = false;
-                continue;
-            }
-
             // Se o evento nao pertence a Toolbar, trata o Canvas
             if (!clickedUI)
             {
@@ -232,8 +234,18 @@ int main(int argc, char* args[])
                     {
                         polygonPoints.push_back(clickPoint);
                     }
+
+                    // Executa o Flood Fill no ponto clicado
+                    else if (toolbar.getCurrentTool() == TOOL_FLOOD_FILL)
+                    {
+                        canvas.addFloodFill(
+                            Point(event.button.x, event.button.y),
+                            Color(255, 0, 0)
+                        );
+                    }
                 }
 
+                // Mouse movimentando
                 // Mouse movimentando
                 if (event.type == SDL_MOUSEMOTION && drawing)
                 {
@@ -241,12 +253,39 @@ int main(int argc, char* args[])
                         event.motion.x,
                         event.motion.y
                     );
+
+                    // Não permite desenhar fora da área do Canvas
+                    if (currentPoint.getX() < 0)
+                    {
+                        currentPoint.setX(0);
+                    }
+
+                    if (currentPoint.getX() >= 640)
+                    {
+                        currentPoint.setX(639);
+                    }
+
+                    if (currentPoint.getY() < 40)
+                    {
+                        currentPoint.setY(40);
+                    }
+
+                    if (currentPoint.getY() >= 480)
+                    {
+                        currentPoint.setY(479);
+                    }
                 }
 
                 // Mouse liberado
                 if (event.type == SDL_MOUSEBUTTONUP &&
                     event.button.button == SDL_BUTTON_LEFT)
                 {
+                    // Impede que gere um ponto fora da area do canvas gerando crash
+                    if (!canvas.isInside(event.button.x, event.button.y))
+                    {
+                        drawing = false;
+                        continue;
+                    }
                     // Cria a linha quando o usuario soltar o click do mouse
                     if (toolbar.getCurrentTool() == TOOL_LINE &&
                         drawing)
@@ -346,8 +385,4 @@ int main(int argc, char* args[])
 
         usleep(10000);
     }
-
-    SDL_Quit();
-
-    return 0;
 }

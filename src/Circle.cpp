@@ -1,11 +1,5 @@
 #include "Circle.h"
-#include "Context.h"
 #include "Line.h"
-
-Circle::Circle()
-{
-    // ctor
-}
 
 Circle::~Circle()
 {

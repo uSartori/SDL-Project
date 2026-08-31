@@ -47,6 +47,7 @@
 		<Unit filename="include/Color.h" />
 		<Unit filename="include/Context.h" />
 		<Unit filename="include/Curve.h" />
+		<Unit filename="include/FloodFill.h" />
 		<Unit filename="include/Line.h" />
 		<Unit filename="include/Point.h" />
 		<Unit filename="include/Polygon.h" />
@@ -60,6 +61,7 @@
 		<Unit filename="src/Color.cpp" />
 		<Unit filename="src/Context.cpp" />
 		<Unit filename="src/Curve.cpp" />
+		<Unit filename="src/FloodFill.cpp" />
 		<Unit filename="src/Line.cpp" />
 		<Unit filename="src/Point.cpp" />
 		<Unit filename="src/Polygon.cpp" />

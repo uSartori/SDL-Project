@@ -61,9 +61,15 @@ void Line::setPixel(int x, int y, int r, int g, int b, int a)
     SDL_Surface* window_surface =
         Context::getInstance()->getWindowSurface();
 
-    // Ignora pixels que estejam fora dos limites da janela
     if (x < 0 || x >= window_surface->w ||
         y < 0 || y >= window_surface->h)
+    {
+        return;
+    }
+
+    Context* context = Context::getInstance();
+
+    if (!context->isInsideViewport(x, y))
     {
         return;
     }

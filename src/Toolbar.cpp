@@ -3,6 +3,7 @@
 #include "Circle.h"
 #include "Curve.h"
 #include "Polygon.h"
+#include "Context.h"
 
 Toolbar::Toolbar(int width, int height) : width(width), height(height) {
     currentTool = TOOL_LINE;
@@ -37,57 +38,86 @@ bool Toolbar::handleEvent(const SDL_Event& event) {
     return false;
 }
 
-void Toolbar::render(){
+void Toolbar::render()
+{
     Color gray(200, 200, 200);
     Color darkGray(130, 130, 130);
     Color blue(100, 149, 237);
     Color black(0, 0, 0);
 
-    Rectangle background(Point(0, 0), width, height, gray);
-    background.draw();
+    // Preenche o fundo da Toolbar
+    Line line;
 
-    for (const auto& btn : buttons) {
-        Color btnColor = (currentTool == btn.tool) ? blue : darkGray;
-        Rectangle btnRect(Point(btn.x, btn.y), btn.w, btn.h, btnColor);
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            line.setPixel(x, y, gray);
+        }
+    }
+
+    // Desenha os botões
+    for (const auto& btn : buttons)
+    {
+        Color btnColor =
+            (currentTool == btn.tool) ? blue : darkGray;
+
+        Rectangle btnRect(
+            Point(btn.x, btn.y),
+            btn.w,
+            btn.h,
+            btnColor
+        );
+
         btnRect.draw();
 
-        //Calcula centro do btn p/ posicionar icones
         int cx = btn.x + btn.w / 2;
         int cy = btn.y + btn.h / 2;
 
-        //desenha icone btn usando suas proprias classes
-        switch (btn.tool) {
-            case TOOL_LINE: {
-                Line line(Point(btn.x + 12, btn.y + btn.h - 8), Point(btn.x + btn.w - 12, btn.y + 8), black);
+        switch (btn.tool)
+        {
+            case TOOL_LINE:
+            {
+                Line line(
+                    Point(btn.x + 12, btn.y + btn.h - 8),
+                    Point(btn.x + btn.w - 12, btn.y + 8),
+                    black
+                );
+
                 line.draw();
                 break;
             }
-            case TOOL_RECTANGLE: {
-                Rectangle iconRect(Point(btn.x + 15, btn.y + 8), btn.w - 30, btn.h - 16, black);
+
+            case TOOL_RECTANGLE:
+            {
+                Rectangle iconRect(
+                    Point(btn.x + 15, btn.y + 8),
+                    btn.w - 30,
+                    btn.h - 16,
+                    black
+                );
+
                 iconRect.draw();
                 break;
             }
-            case TOOL_CIRCLE: {
-                Circle circle(Point(cx, cy), 12, black);
+
+            case TOOL_CIRCLE:
+            {
+                Circle circle(
+                    Point(cx, cy),
+                    12,
+                    black
+                );
+
                 circle.draw();
                 break;
             }
-            case TOOL_CURVE: {
-                //falta esse
+
+            case TOOL_CURVE:
+            case TOOL_POLYGON:
+            case TOOL_FLOOD_FILL:
+            case TOOL_SELECT:
                 break;
-            }
-            case TOOL_POLYGON: {
-               //falta esse
-                break;
-            }
-            case TOOL_FLOOD_FILL: {
-                //falta esse
-                break;
-            }
-            case TOOL_SELECT: {
-                //falta esse
-                break;
-            }
         }
     }
 }
