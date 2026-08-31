@@ -1,0 +1,10 @@
+# Arquivos de compilação do Code::Blocks
+bin/
+obj/
+
+# Executáveis
+*.exe
+
+# Arquivos objeto
+*.o
+*.obj
