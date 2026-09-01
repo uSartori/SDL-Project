@@ -119,7 +119,17 @@ void Toolbar::render()
             break;
         }
 
-        case TOOL_CURVE:
+        case TOOL_CURVE:{
+             Point pts[4] = {
+             Point(btn.x + 10, cy + 6),
+             Point(cx - 6, cy - 10),
+             Point(cx + 6, cy - 10),
+             Point(btn.x + btn.w - 10, cy + 6)
+             };
+             Curve curve(pts, black);
+             curve.draw();
+             break;
+        }
         case TOOL_POLYGON:
         case TOOL_FLOOD_FILL:
         case TOOL_SELECT:
