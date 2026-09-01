@@ -9,12 +9,14 @@ Transform::Transform()
     // ctor
 }
 
-Transform::~Transform(){
+Transform::~Transform()
+{
     // dtor
 }
 
 // Move uma figura de lugar
-void Transform::translate(Point points[], int numPoints, double tx, double ty){
+void Transform::translate(Point points[], int numPoints, double tx, double ty)
+{
     for (int i = 0; i < numPoints; i++)
     {
         points[i].setX(points[i].getX() + tx);
@@ -23,7 +25,8 @@ void Transform::translate(Point points[], int numPoints, double tx, double ty){
 }
 
 // Muda o tamanho de uma figura
-void Transform::scale(Point points[], int numPoints, double sx, double sy, Point reference){
+void Transform::scale(Point points[], int numPoints, double sx, double sy, Point reference)
+{
     // Leva a figura para a origem
     for (int i = 0; i < numPoints; i++)
     {
@@ -47,7 +50,8 @@ void Transform::scale(Point points[], int numPoints, double sx, double sy, Point
 }
 
 // Rotaciona uma figura
-void Transform::rotate(Point points[], int numPoints, double angle, Point reference){
+void Transform::rotate(Point points[], int numPoints, double angle, Point reference)
+{
     double rad = angle * M_PI / 180.0;
 
     double cosA = cos(rad);
@@ -74,7 +78,8 @@ void Transform::rotate(Point points[], int numPoints, double angle, Point refere
     }
 
     // Retorna a figura para a posicao original
-    for (int i = 0; i < numPoints; i++){
+    for (int i = 0; i < numPoints; i++)
+    {
         points[i].setX(points[i].getX() + reference.getX());
         points[i].setY(points[i].getY() + reference.getY());
     }

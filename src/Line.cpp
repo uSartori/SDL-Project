@@ -13,7 +13,8 @@ Line::~Line()
     //dtor
 }
 
-Line::Line(Point start, Point end, Color color) {
+Line::Line(Point start, Point end, Color color)
+{
     this->start = start;
     this->end = end;
     this->color = color;
@@ -29,7 +30,8 @@ Line::Line(Point start, Point end, Color color, int antialias) {
 }
 */
 
-void Line::setPixel(int x, int y, Uint32 cor) {
+void Line::setPixel(int x, int y, Uint32 cor)
+{
 
     Color c = Color();
     Uint8 r = c.getColorComponent(cor, 'r');
@@ -38,8 +40,9 @@ void Line::setPixel(int x, int y, Uint32 cor) {
     this->setPixel(x, y, r, g, b);
 }
 
-void Line::setPixel(int x, int y, Color color) {
-	this->setPixel(x, y, color.getR(),color.getG(),color.getB());
+void Line::setPixel(int x, int y, Color color)
+{
+    this->setPixel(x, y, color.getR(),color.getG(),color.getB());
 }
 
 /*
@@ -50,7 +53,8 @@ void Line::setPixel(int x, int y, int r, int g, int b) {
 }
 */
 
-void Line::setPixel(int x, int y, int r, int g, int b) {
+void Line::setPixel(int x, int y, int r, int g, int b)
+{
     setPixel(x, y, r, g, b, 255);
 }
 
@@ -62,7 +66,7 @@ void Line::setPixel(int x, int y, int r, int g, int b, int a)
         Context::getInstance()->getWindowSurface();
 
     if (x < 0 || x >= window_surface->w ||
-        y < 0 || y >= window_surface->h)
+            y < 0 || y >= window_surface->h)
     {
         return;
     }
@@ -84,8 +88,10 @@ void Line::setPixel(int x, int y, int r, int g, int b, int a)
         );
 }
 
-void Line::draw() {
-    if(this->antialias) {
+void Line::draw()
+{
+    if(this->antialias)
+    {
         this->drawWuLine(
             this->start.getX(),
             this->start.getY(),
@@ -93,7 +99,8 @@ void Line::draw() {
             this->end.getY(),
             this->color);
     }
-    else {
+    else
+    {
         this->bresenham(
             this->start.getX(),
             this->start.getY(),
@@ -115,28 +122,28 @@ Uint32 Line::getPixel(int x, int y)
 
     switch (bpp)
     {
-        case 1:
-            return *p;
-            break;
+    case 1:
+        return *p;
+        break;
 
-        case 2:
-            return *(Uint16 *)p;
-            break;
+    case 2:
+        return *(Uint16 *)p;
+        break;
 
-        case 3:
-            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-                return p[0] << 16 | p[1] << 8 | p[2];
-            else
-                return p[0] | p[1] << 8 | p[2] << 16;
-            break;
+    case 3:
+        if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            return p[0] << 16 | p[1] << 8 | p[2];
+        else
+            return p[0] | p[1] << 8 | p[2] << 16;
+        break;
 
-            case 4:
-                return *(Uint32 *)p;
-                break;
+    case 4:
+        return *(Uint32 *)p;
+        break;
 
-            default:
-                return 0;       /* shouldn't happen, but avoids warnings */
-      }
+    default:
+        return 0;       /* shouldn't happen, but avoids warnings */
+    }
 }
 
 void Line::drawWuLine(int x0, int y0, int x1, int y1, Color color )
@@ -145,8 +152,12 @@ void Line::drawWuLine(int x0, int y0, int x1, int y1, Color color )
     /* Make sure the line runs top to bottom */
     if (y0 > y1)
     {
-        int aux = y0; y0 = y1; y1 = aux;
-        aux = x0; x0 = x1; x1 = aux;
+        int aux = y0;
+        y0 = y1;
+        y1 = aux;
+        aux = x0;
+        x0 = x1;
+        x1 = aux;
     }
 
     /* Draw the initial pixel, which is always exactly intersected by
@@ -185,7 +196,8 @@ void Line::drawWuLine(int x0, int y0, int x1, int y1, Color color )
         {
             y0++;
             setPixel( x0, y0, color );
-        } while (--deltaY != 0);
+        }
+        while (--deltaY != 0);
         return;
     }
 
@@ -197,7 +209,8 @@ void Line::drawWuLine(int x0, int y0, int x1, int y1, Color color )
             x0 += xDir;
             y0++;
             setPixel( x0, y0, color );
-        } while (--deltaY != 0);
+        }
+        while (--deltaY != 0);
         return;
     }
 
@@ -217,21 +230,23 @@ void Line::drawWuLine(int x0, int y0, int x1, int y1, Color color )
     /* Is this an X-major or Y-major line? */
     if (deltaY > deltaX)
     {
-    /* Y-major line; calculate 16-bit fixed-point fractional part of a
-    pixel that X advances each time Y advances 1 pixel, truncating the
-        result so that we won't overrun the endpoint along the X axis */
+        /* Y-major line; calculate 16-bit fixed-point fractional part of a
+        pixel that X advances each time Y advances 1 pixel, truncating the
+            result so that we won't overrun the endpoint along the X axis */
         errorAdj = ((unsigned long) deltaX << 16) / (unsigned long) deltaY;
         /* Draw all pixels other than the first and last */
-        while (--deltaY) {
+        while (--deltaY)
+        {
             errorAccaux = errorAcc;   /* remember currrent accumulated error */
             errorAcc += errorAdj;      /* calculate error for next pixel */
-            if (errorAcc <= errorAccaux) {
+            if (errorAcc <= errorAccaux)
+            {
                 /* The error accumulator turned over, so advance the X coord */
                 x0 += xDir;
             }
             y0++; /* Y-major, so always advance Y */
-                  /* The IntensityBits most significant bits of errorAcc give us the
-                  intensity weighting for this pixel, and the complement of the
+            /* The IntensityBits most significant bits of errorAcc give us the
+            intensity weighting for this pixel, and the complement of the
             weighting for the paired pixel */
             weighting = errorAcc >> 8;
             /*
@@ -272,16 +287,18 @@ void Line::drawWuLine(int x0, int y0, int x1, int y1, Color color )
     result to avoid overrunning the endpoint along the X axis */
     errorAdj = ((unsigned long) deltaY << 16) / (unsigned long) deltaX;
     /* Draw all pixels other than the first and last */
-    while (--deltaX) {
+    while (--deltaX)
+    {
         errorAccaux = errorAcc;   /* remember currrent accumulated error */
         errorAcc += errorAdj;      /* calculate error for next pixel */
-        if (errorAcc <= errorAccaux) {
+        if (errorAcc <= errorAccaux)
+        {
             /* The error accumulator turned over, so advance the Y coord */
             y0++;
         }
         x0 += xDir; /* X-major, so always advance X */
-                    /* The IntensityBits most significant bits of errorAcc give us the
-                    intensity weighting for this pixel, and the complement of the
+        /* The IntensityBits most significant bits of errorAcc give us the
+        intensity weighting for this pixel, and the complement of the
         weighting for the paired pixel */
         weighting = errorAcc >> 8;
         /*
@@ -348,7 +365,7 @@ void Line::bresenham(int x1, int y1, int x2, int y2, int r, int g, int b)
             xe=x1;
         }
         setPixel(x,y,r,g,b);
-        for(i=0;x<xe;i++)
+        for(i=0; x<xe; i++)
         {
             x=x+1;
             if(px<0)
@@ -385,7 +402,7 @@ void Line::bresenham(int x1, int y1, int x2, int y2, int r, int g, int b)
             ye=y1;
         }
         setPixel(x,y,r,g,b);
-        for(i=0;y<ye;i++)
+        for(i=0; y<ye; i++)
         {
             y=y+1;
             if(py<=0)
@@ -458,4 +475,67 @@ void Line::rotate(double angle)
 
     start = points[0];
     end = points[1];
+}
+
+bool Line::isNear(int clickX, int clickY)
+{
+    int x1 = start.getX();
+    int y1 = start.getY();
+
+    int x2 = end.getX();
+    int y2 = end.getY();
+
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+
+    double lengthSquared = dx * dx + dy * dy;
+
+    // Caso especial: linha com apenas um pixel
+    if (lengthSquared == 0)
+    {
+        int diffX = clickX - x1;
+        int diffY = clickY - y1;
+
+        return diffX * diffX + diffY * diffY <= 25;
+    }
+
+    // Projeta o ponto do clique sobre a linha
+    double t =
+        ((clickX - x1) * dx +
+         (clickY - y1) * dy) / lengthSquared;
+
+    // Mantém a projeção dentro do segmento
+    if (t < 0)
+    {
+        t = 0;
+    }
+
+    if (t > 1)
+    {
+        t = 1;
+    }
+
+    double closestX = x1 + t * dx;
+    double closestY = y1 + t * dy;
+
+    double distanceX = clickX - closestX;
+    double distanceY = clickY - closestY;
+
+    // Distância euclidiana ao quadrado
+    double distanceSquared =
+        distanceX * distanceX +
+        distanceY * distanceY;
+
+    // 5 pixels -> 5² = 25
+    return distanceSquared <= 25;
+}
+
+Point Line::getStart()
+{
+    return start;
+}
+
+Point Line::getEnd()
+{
+    return end;
 }

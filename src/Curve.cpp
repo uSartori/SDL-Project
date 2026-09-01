@@ -105,3 +105,36 @@ void Curve::rotate(double angle)
 
     transform.rotate(points, 4, angle, reference);
 }
+
+bool Curve::isNear(int clickX, int clickY)
+{
+    for (float t = 0.0f; t <= 1.0f; t += 0.001f)
+    {
+        float x =
+            pow(1 - t, 3) * points[0].getX()
+            + 3 * pow(1 - t, 2) * t * points[1].getX()
+            + 3 * (1 - t) * pow(t, 2) * points[2].getX()
+            + pow(t, 3) * points[3].getX();
+
+        float y =
+            pow(1 - t, 3) * points[0].getY()
+            + 3 * pow(1 - t, 2) * t * points[1].getY()
+            + 3 * (1 - t) * pow(t, 2) * points[2].getY()
+            + pow(t, 3) * points[3].getY();
+
+        int pixelX = (int)x;
+        int pixelY = (int)y;
+
+        int dx = clickX - pixelX;
+        int dy = clickY - pixelY;
+
+        // Distancia euclidiana ao quadrado.
+        // 5 pixels -> 25.
+        if (dx * dx + dy * dy <= 25)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}

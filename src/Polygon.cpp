@@ -201,3 +201,110 @@ void Polygon::rotate(double angle)
         pontos.push_back(points[i]);
     }
 }
+
+bool Polygon::isNear(int clickX, int clickY)
+{
+    if (pontos.size() < 2)
+    {
+        return false;
+    }
+
+    auto it1 = pontos.begin();
+    auto it2 = std::next(it1);
+
+    while (it2 != pontos.end())
+    {
+        Point a = *it1;
+        Point b = *it2;
+
+        double dx = b.getX() - a.getX();
+        double dy = b.getY() - a.getY();
+
+        double lengthSquared = dx * dx + dy * dy;
+
+        if (lengthSquared == 0)
+        {
+            double px = clickX - a.getX();
+            double py = clickY - a.getY();
+
+            if (px * px + py * py <= 25)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            double t =
+                ((clickX - a.getX()) * dx +
+                 (clickY - a.getY()) * dy) /
+                lengthSquared;
+
+            if (t < 0)
+            {
+                t = 0;
+            }
+
+            if (t > 1)
+            {
+                t = 1;
+            }
+
+            double closestX = a.getX() + t * dx;
+            double closestY = a.getY() + t * dy;
+
+            double distanceX = clickX - closestX;
+            double distanceY = clickY - closestY;
+
+            if (distanceX * distanceX +
+                    distanceY * distanceY <= 25)
+            {
+                return true;
+            }
+        }
+
+        ++it1;
+        ++it2;
+    }
+
+    // Verifica também o ultimo lado:
+    // ultimo ponto -> primeiro ponto
+    Point first = pontos.front();
+    Point last = pontos.back();
+
+    double dx = first.getX() - last.getX();
+    double dy = first.getY() - last.getY();
+
+    double lengthSquared = dx * dx + dy * dy;
+
+    if (lengthSquared == 0)
+    {
+        double px = clickX - last.getX();
+        double py = clickY - last.getY();
+
+        return px * px + py * py <= 25;
+    }
+
+    double t =
+        ((clickX - last.getX()) * dx +
+         (clickY - last.getY()) * dy) /
+        lengthSquared;
+
+    if (t < 0)
+    {
+        t = 0;
+    }
+
+    if (t > 1)
+    {
+        t = 1;
+    }
+
+    double closestX = last.getX() + t * dx;
+    double closestY = last.getY() + t * dy;
+
+    double distanceX = clickX - closestX;
+    double distanceY = clickY - closestY;
+
+    return distanceX * distanceX +
+           distanceY * distanceY <= 25;
+}

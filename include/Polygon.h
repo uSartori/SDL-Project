@@ -25,6 +25,7 @@ public:
     void translate(double tx, double ty) override;
     void scale(double sx, double sy) override;
     void rotate(double angle) override;
+    bool isNear(int x, int y) override;
 
     void drawPolygon(list<Point> pontos, Color cor);
 

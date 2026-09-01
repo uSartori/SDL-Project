@@ -1,6 +1,8 @@
 #include "Circle.h"
 #include "Line.h"
 
+#include <cmath>
+
 Circle::~Circle()
 {
     // dtor
@@ -108,4 +110,20 @@ void Circle::scale(double sx, double sy)
 void Circle::rotate(double angle)
 {
     // A rotacao nao afeta o circulo
+}
+
+bool Circle::isNear(int clickX, int clickY)
+{
+    double dx = clickX - xy.getX();
+    double dy = clickY - xy.getY();
+
+    double distanceSquared =
+        dx * dx + dy * dy;
+
+    double radiusDifference =
+        sqrt(distanceSquared) - radius;
+
+    // Considera uma faixa de 5 pixels em torno
+    // dos pixels que formam a circunferencia.
+    return fabs(radiusDifference) <= 5.0;
 }

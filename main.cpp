@@ -85,7 +85,7 @@ void display(Canvas& canvas, Toolbar& toolbar)
 
     // Mostra as linhas do poligono conforme os pontos sao adicionados
     if (toolbar.getCurrentTool() == TOOL_POLYGON &&
-        polygonPoints.size() >= 2)
+            polygonPoints.size() >= 2)
     {
         Line line;
         Point anterior = polygonPoints.front();
@@ -130,21 +130,21 @@ int main()
     {
         // Cria a janela
         pWindow = SDL_CreateWindow(
-            "SDL_Classes",
-            SDL_WINDOWPOS_CENTERED,
-            SDL_WINDOWPOS_CENTERED,
-            640,
-            480,
-            SDL_WINDOW_SHOWN
-        );
+                      "SDL_Classes",
+                      SDL_WINDOWPOS_CENTERED,
+                      SDL_WINDOWPOS_CENTERED,
+                      640,
+                      480,
+                      SDL_WINDOW_SHOWN
+                  );
 
         if (pWindow != nullptr)
         {
             pRenderer = SDL_CreateRenderer(
-                pWindow,
-                -1,
-                0
-            );
+                            pWindow,
+                            -1,
+                            0
+                        );
 
             window_surface = SDL_GetWindowSurface(pWindow);
 
@@ -188,17 +188,26 @@ int main()
             {
                 // Mouse pressionado
                 if (event.type == SDL_MOUSEBUTTONDOWN &&
-                    event.button.button == SDL_BUTTON_LEFT)
+                        event.button.button == SDL_BUTTON_LEFT)
                 {
                     Point clickPoint(
                         event.button.x,
                         event.button.y
                     );
 
+                    // Seleciona uma figura ja desenhada
+                    if (toolbar.getCurrentTool() == TOOL_SELECT)
+                    {
+                        canvas.selectShape(
+                            event.button.x,
+                            event.button.y
+                        );
+                    }
+
                     // Criacao de uma figura que precise de dois pontos para ser criada
-                    if (toolbar.getCurrentTool() == TOOL_LINE
-                        || toolbar.getCurrentTool() == TOOL_RECTANGLE
-                        || toolbar.getCurrentTool() == TOOL_CIRCLE)
+                    else if (toolbar.getCurrentTool() == TOOL_LINE
+                             || toolbar.getCurrentTool() == TOOL_RECTANGLE
+                             || toolbar.getCurrentTool() == TOOL_CIRCLE)
                     {
                         drawing = true;
 
@@ -250,9 +259,9 @@ int main()
                 if (event.type == SDL_MOUSEMOTION && drawing)
                 {
                     currentPoint = Point(
-                        event.motion.x,
-                        event.motion.y
-                    );
+                                       event.motion.x,
+                                       event.motion.y
+                                   );
 
                     // Não permite desenhar fora da área do Canvas
                     if (currentPoint.getX() < 0)
@@ -278,7 +287,7 @@ int main()
 
                 // Mouse liberado
                 if (event.type == SDL_MOUSEBUTTONUP &&
-                    event.button.button == SDL_BUTTON_LEFT)
+                        event.button.button == SDL_BUTTON_LEFT)
                 {
                     // Impede que gere um ponto fora da area do canvas gerando crash
                     if (!canvas.isInside(event.button.x, event.button.y))
@@ -286,9 +295,10 @@ int main()
                         drawing = false;
                         continue;
                     }
+
                     // Cria a linha quando o usuario soltar o click do mouse
                     if (toolbar.getCurrentTool() == TOOL_LINE &&
-                        drawing)
+                            drawing)
                     {
                         Point endPoint(
                             event.button.x,
@@ -360,7 +370,7 @@ int main()
 
                 // Apertar botao direito do mouse completa o poligono
                 if (event.type == SDL_MOUSEBUTTONDOWN &&
-                    event.button.button == SDL_BUTTON_RIGHT)
+                        event.button.button == SDL_BUTTON_RIGHT)
                 {
                     if (toolbar.getCurrentTool() == TOOL_POLYGON)
                     {

@@ -5,7 +5,8 @@
 #include "Polygon.h"
 #include "Context.h"
 
-Toolbar::Toolbar(int width, int height) : width(width), height(height) {
+Toolbar::Toolbar(int width, int height) : width(width), height(height)
+{
     currentTool = TOOL_LINE;
 
     buttons.push_back({10,  5, 60, 30, TOOL_LINE});
@@ -19,15 +20,20 @@ Toolbar::Toolbar(int width, int height) : width(width), height(height) {
 
 Toolbar::~Toolbar() {}
 
-bool Toolbar::handleEvent(const SDL_Event& event) {
+bool Toolbar::handleEvent(const SDL_Event& event)
+{
     //verifica clique botao esquerdo
-    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT){
+    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+    {
         int mx = event.button.x;
         int my = event.button.y;
 
-        if(my <= height){
-            for(const auto& btn : buttons){
-                if(mx >= btn.x && mx <= btn.x + btn.w && my >= btn.y && my <= btn.y + btn.h){
+        if(my <= height)
+        {
+            for(const auto& btn : buttons)
+            {
+                if(mx >= btn.x && mx <= btn.x + btn.w && my >= btn.y && my <= btn.y + btn.h)
+                {
                     currentTool = btn.tool;
                     return true;
                 }
@@ -76,56 +82,58 @@ void Toolbar::render()
 
         switch (btn.tool)
         {
-            case TOOL_LINE:
-            {
-                Line line(
-                    Point(btn.x + 12, btn.y + btn.h - 8),
-                    Point(btn.x + btn.w - 12, btn.y + 8),
-                    black
-                );
+        case TOOL_LINE:
+        {
+            Line line(
+                Point(btn.x + 12, btn.y + btn.h - 8),
+                Point(btn.x + btn.w - 12, btn.y + 8),
+                black
+            );
 
-                line.draw();
-                break;
-            }
+            line.draw();
+            break;
+        }
 
-            case TOOL_RECTANGLE:
-            {
-                Rectangle iconRect(
-                    Point(btn.x + 15, btn.y + 8),
-                    btn.w - 30,
-                    btn.h - 16,
-                    black
-                );
+        case TOOL_RECTANGLE:
+        {
+            Rectangle iconRect(
+                Point(btn.x + 15, btn.y + 8),
+                btn.w - 30,
+                btn.h - 16,
+                black
+            );
 
-                iconRect.draw();
-                break;
-            }
+            iconRect.draw();
+            break;
+        }
 
-            case TOOL_CIRCLE:
-            {
-                Circle circle(
-                    Point(cx, cy),
-                    12,
-                    black
-                );
+        case TOOL_CIRCLE:
+        {
+            Circle circle(
+                Point(cx, cy),
+                12,
+                black
+            );
 
-                circle.draw();
-                break;
-            }
+            circle.draw();
+            break;
+        }
 
-            case TOOL_CURVE:
-            case TOOL_POLYGON:
-            case TOOL_FLOOD_FILL:
-            case TOOL_SELECT:
-                break;
+        case TOOL_CURVE:
+        case TOOL_POLYGON:
+        case TOOL_FLOOD_FILL:
+        case TOOL_SELECT:
+            break;
         }
     }
 }
 
-ToolType Toolbar::getCurrentTool() const{
+ToolType Toolbar::getCurrentTool() const
+{
     return currentTool;
 }
 
-void Toolbar::setTool(ToolType tool){
+void Toolbar::setTool(ToolType tool)
+{
     currentTool = tool;
 }

@@ -24,6 +24,11 @@ public:
 
     std::vector<Shape*>& getShapes();
 
+    void selectShape(int x, int y);
+    Shape* getSelectedShape();
+
+    //void deleteSelectedShape();         <- ainda vou implementar
+
 private:
     struct Fill
     {
@@ -39,6 +44,9 @@ private:
 
     std::vector<Shape*> shapes;
     std::vector<Fill> fills;
+
+    Shape* selectedShape;
+    void drawSelectionIndicator();
 };
 
 #endif // CANVAS_H

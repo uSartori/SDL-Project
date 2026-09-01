@@ -16,62 +16,56 @@ FloodFill::~FloodFill()
 // Retorna a cor de um pixel da tela
 Uint32 FloodFill::getPixel(int x, int y)
 {
-    SDL_Surface* surface =
-        Context::getInstance()->getWindowSurface();
+    SDL_Surface* surface = Context::getInstance()->getWindowSurface();
 
     if (surface == nullptr)
     {
         return 0;
     }
 
-    if (x < 0 || x >= surface->w ||
-        y < 0 || y >= surface->h)
+    if (x < 0 || x >= surface->w || y < 0 || y >= surface->h)
     {
         return 0;
     }
 
     int bpp = surface->format->BytesPerPixel;
 
-    Uint8* p =
-        (Uint8*)surface->pixels +
-        y * surface->pitch +
-        x * bpp;
+    Uint8* p = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
 
     switch (bpp)
     {
-        case 1:
-            return *p;
+    case 1:
+        return *p;
 
-        case 2:
-            return *(Uint16*)p;
+    case 2:
+        return *(Uint16*)p;
 
-        case 3:
-            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-            {
-                return p[0] << 16 |
-                       p[1] << 8 |
-                       p[2];
-            }
-            else
-            {
-                return p[0] |
-                       p[1] << 8 |
-                       p[2] << 16;
-            }
+    case 3:
+        if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+        {
+            return p[0] << 16 |
+                   p[1] << 8 |
+                   p[2];
+        }
+        else
+        {
+            return p[0] |
+                   p[1] << 8 |
+                   p[2] << 16;
+        }
 
-        case 4:
-            return *(Uint32*)p;
+    case 4:
+        return *(Uint32*)p;
 
-        default:
-            return 0;
+    default:
+        return 0;
     }
 }
 
 // Altera a cor de um pixel
 void FloodFill::setPixel(int x, int y, Color color)
 {
-    SDL_Surface* surface =
-        Context::getInstance()->getWindowSurface();
+    SDL_Surface* surface = Context::getInstance()->getWindowSurface();
 
     if (surface == nullptr)
     {
@@ -79,25 +73,23 @@ void FloodFill::setPixel(int x, int y, Color color)
     }
 
     if (x < 0 || x >= surface->w ||
-        y < 0 || y >= surface->h)
+            y < 0 || y >= surface->h)
     {
         return;
     }
 
-    // Não permite pintar a Toolbar
+    // Nao permite pintar a Toolbar
     if (y < 40)
     {
         return;
     }
 
-    Uint32 pixelColor =
-        SDL_MapRGBA(
-            surface->format,
-            color.getR(),
-            color.getG(),
-            color.getB(),
-            255
-        );
+    Uint32 pixelColor = SDL_MapRGBA(surface->format,
+                                    color.getR(),
+                                    color.getG(),
+                                    color.getB(),
+                                    255
+                                   );
 
     int bpp = surface->format->BytesPerPixel;
 
@@ -108,32 +100,32 @@ void FloodFill::setPixel(int x, int y, Color color)
 
     switch (bpp)
     {
-        case 1:
-            *p = pixelColor;
-            break;
+    case 1:
+        *p = pixelColor;
+        break;
 
-        case 2:
-            *(Uint16*)p = pixelColor;
-            break;
+    case 2:
+        *(Uint16*)p = pixelColor;
+        break;
 
-        case 3:
-            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-            {
-                p[0] = (pixelColor >> 16) & 0xFF;
-                p[1] = (pixelColor >> 8) & 0xFF;
-                p[2] = pixelColor & 0xFF;
-            }
-            else
-            {
-                p[0] = pixelColor & 0xFF;
-                p[1] = (pixelColor >> 8) & 0xFF;
-                p[2] = (pixelColor >> 16) & 0xFF;
-            }
-            break;
+    case 3:
+        if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+        {
+            p[0] = (pixelColor >> 16) & 0xFF;
+            p[1] = (pixelColor >> 8) & 0xFF;
+            p[2] = pixelColor & 0xFF;
+        }
+        else
+        {
+            p[0] = pixelColor & 0xFF;
+            p[1] = (pixelColor >> 8) & 0xFF;
+            p[2] = (pixelColor >> 16) & 0xFF;
+        }
+        break;
 
-        case 4:
-            *(Uint32*)p = pixelColor;
-            break;
+    case 4:
+        *(Uint32*)p = pixelColor;
+        break;
     }
 }
 
@@ -159,7 +151,7 @@ void FloodFill::fill(Point startPoint, Color newColor)
 
     // O Flood Fill só funciona dentro do Canvas
     if (startX < 0 || startX >= surface->w ||
-        startY < 40 || startY >= surface->h)
+            startY < 40 || startY >= surface->h)
     {
         return;
     }
@@ -196,7 +188,7 @@ void FloodFill::fill(Point startPoint, Color newColor)
 
         // Limites do Canvas
         if (x < 0 || x >= surface->w ||
-            y < 40 || y >= surface->h)
+                y < 40 || y >= surface->h)
         {
             continue;
         }

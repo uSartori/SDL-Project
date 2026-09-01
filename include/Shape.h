@@ -2,8 +2,6 @@
 #define SHAPE_H
 
 // Classe base para todas as figuras geométricas do projeto (funciona como uma interface em java).
-//
-// Como cada figura do projeto é diferente, cada figura deve implementar essas operacoes de acordo com sua necessidade.
 class Shape
 {
 public:
@@ -19,6 +17,9 @@ public:
 
     // Rotaciona a figura pelo ângulo informado em graus.
     virtual void rotate(double angle) = 0;
+
+    // Verifica se o click do mouse foi proximo da figura
+    virtual bool isNear(int x, int y) = 0;
 
     virtual ~Shape() = default;
 };

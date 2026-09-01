@@ -16,10 +16,14 @@ class Line : public Shape
         void setPixel(int x, int y, int r, int g, int b);
         void setPixel(int x, int y, Color color);
 
+        Point getStart();
+        Point getEnd();
+
         void draw() override;
         void translate(double tx, double ty) override;
         void scale(double sx, double sy) override;
         void rotate(double angle) override;
+        bool isNear(int x, int y) override;
 
         void drawWuLine(int x0, int y0, int x1, int y1, Color color);
         void bresenham(int x1, int y1, int x2, int y2, int r, int g, int b);
@@ -36,6 +40,7 @@ class Line : public Shape
         void setPixel(int x, int y, int r, int g, int b, int a);
         void setPixel(int x, int y, Uint32 cor);
         Uint32 getPixel(int x, int y);
+
 
 };
 
