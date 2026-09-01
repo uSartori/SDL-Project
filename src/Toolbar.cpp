@@ -130,9 +130,35 @@ void Toolbar::render()
              curve.draw();
              break;
         }
-        case TOOL_POLYGON:
+        case TOOL_POLYGON:{
+             std::list<Point> pts ={
+                 Point(cx, cy - 10),
+                 Point(cx + 9, cy-5),
+                 Point(cx + 9, cy + 5),
+                 Point(cx, cy + 10),
+                 Point(cx - 9, cy+ 5),
+                 Point(cx - 9, cy - 5)
+             };
+             Polygon polygon(pts, black);
+             polygon.draw();
+             break;
+
+        }
+        case TOOL_SELECT:{
+            Line seta(Point(cx - 10, cy),Point(cx + 4, cy),black);
+            seta.draw();
+
+            std::list<Point> pts ={
+                Point(cx + 10,cy),
+                Point(cx + 4, cy - 5),
+                Point(cx + 4, cy + 5)
+            };
+
+            Polygon ponta(pts, black);
+            ponta.draw();
+            break;
+        }
         case TOOL_FLOOD_FILL:
-        case TOOL_SELECT:
             break;
         }
     }
