@@ -121,10 +121,10 @@ void Toolbar::render()
 
         case TOOL_CURVE:{
              Point pts[4] = {
-             Point(btn.x + 10, cy + 6),
+             Point(btn.x + 10, cy + 8),
              Point(cx - 6, cy - 10),
-             Point(cx + 6, cy - 10),
-             Point(btn.x + btn.w - 10, cy + 6)
+             Point(cx + 6, cy + 10),
+             Point(btn.x + btn.w - 10, cy + -8)
              };
              Curve curve(pts, black);
              curve.draw();
