@@ -4,6 +4,7 @@
 #include "Curve.h"
 #include "Polygon.h"
 #include "Context.h"
+#include "FloodFill.h"
 
 Toolbar::Toolbar(int width, int height) : width(width), height(height)
 {
@@ -158,9 +159,31 @@ void Toolbar::render()
             ponta.draw();
             break;
         }
-        case TOOL_FLOOD_FILL:
-            break;
+        case TOOL_FLOOD_FILL:{
+              //gota
+              Point gotaTopo(cx, cy - 8);
+              Point lineEsquerda(cx - 6, cy + 4);
+              Point lineDireita(cx + 6, cy + 4);
+
+               //retas
+              Line line1(gotaTopo, lineEsquerda, black);
+              line1.draw();
+
+              Line line2(gotaTopo, lineDireita, black);
+              line2.draw();
+               //curva
+              Point curvePts[4] ={
+                   lineEsquerda,
+                   Point(cx -6, cy + 14),
+                   Point(cx + 9, cy + 12),
+                   lineDireita
+             };
+
+             Curve gotaCurve(curvePts, black);
+             gotaCurve.draw();
+             break;
         }
+    }
     }
 }
 
