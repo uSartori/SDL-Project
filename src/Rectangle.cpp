@@ -3,17 +3,19 @@
 #include "Transform.h"
 #include <Color.h>
 #include <cmath>
+#include <algorithm>
 
+// Construtor vazio
 Rectangle::Rectangle()
 {
-    // ctor
 }
 
+// Destrutor
 Rectangle::~Rectangle()
 {
-    // dtor
 }
 
+// Cria um retangulo a partir de um ponto e suas dimensoes
 Rectangle::Rectangle(Point xy, double width, double height, Color color)
 {
     this->xy = xy;
@@ -22,6 +24,7 @@ Rectangle::Rectangle(Point xy, double width, double height, Color color)
     this->color = color;
 }
 
+// Cria um retangulo usando dois pontos
 Rectangle::Rectangle(Point xy0, Point xy1, Color color)
 {
     this->xy = xy0;
@@ -30,31 +33,37 @@ Rectangle::Rectangle(Point xy0, Point xy1, Color color)
     this->color = color;
 }
 
+// Retorna a posição do retangulo
 Point Rectangle::getXy()
 {
     return xy;
 }
 
+// Retorna a largura
 double Rectangle::getWidth()
 {
     return width;
 }
 
+// Retorna a altura
 double Rectangle::getHeight()
 {
     return height;
 }
 
+// Altera a posição
 void Rectangle::setXy(Point xy)
 {
     this->xy = xy;
 }
 
+// Altera a largura
 void Rectangle::setWidth(double width)
 {
     this->width = width;
 }
 
+// Altera a altura
 void Rectangle::setHeight(double height)
 {
     this->height = height;
@@ -64,42 +73,21 @@ void Rectangle::setHeight(double height)
 void Rectangle::draw()
 {
     Point p1 = xy;
-    Point p2 = Point(xy.getX() + width, xy.getY());
-    Point p3 = Point(xy.getX() + width, xy.getY() + height);
-    Point p4 = Point(xy.getX(), xy.getY() + height);
+    Point p2(xy.getX() + width, xy.getY());
+    Point p3(xy.getX() + width, xy.getY() + height);
+    Point p4(xy.getX(), xy.getY() + height);
 
     Line line;
 
-    line.drawWuLine(
-        p1.getX(), p1.getY(),
-        p2.getX(), p2.getY(),
-        color
-    );
-
-    line.drawWuLine(
-        p2.getX(), p2.getY(),
-        p3.getX(), p3.getY(),
-        color
-    );
-
-    line.drawWuLine(
-        p3.getX(), p3.getY(),
-        p4.getX(), p4.getY(),
-        color
-    );
-
-    line.drawWuLine(
-        p4.getX(), p4.getY(),
-        p1.getX(), p1.getY(),
-        color
-    );
+    line.drawWuLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color);
+    line.drawWuLine(p2.getX(), p2.getY(), p3.getX(), p3.getY(), color);
+    line.drawWuLine(p3.getX(), p3.getY(), p4.getX(), p4.getY(), color);
+    line.drawWuLine(p4.getX(), p4.getY(), p1.getX(), p1.getY(), color);
 }
 
 // Translada o retangulo
 void Rectangle::translate(double tx, double ty)
 {
-    Transform transform;
-
     xy.setX(xy.getX() + tx);
     xy.setY(xy.getY() + ty);
 }
@@ -107,94 +95,95 @@ void Rectangle::translate(double tx, double ty)
 // Escala o retangulo usando seu ponto inicial como referencia
 void Rectangle::scale(double sx, double sy)
 {
-    Transform transform;
-
-    width = width * sx;
-    height = height * sy;
+    width *= sx;
+    height *= sy;
 }
 
 // Rotaciona o retangulo
 void Rectangle::rotate(double angle)
 {
+    Point points[4] = {
+        xy,
+        Point(xy.getX() + width, xy.getY()),
+        Point(xy.getX() + width, xy.getY() + height),
+        Point(xy.getX(), xy.getY() + height)
+    };
+
     Transform transform;
-
-    Point p1 = xy;
-    Point p2 = Point(xy.getX() + width, xy.getY());
-    Point p3 = Point(xy.getX() + width, xy.getY() + height);
-    Point p4 = Point(xy.getX(), xy.getY() + height);
-
-    Point points[4] = {p1, p2, p3, p4};
-
     transform.rotate(points, 4, angle, xy);
 
-    // Atualiza a posição e as dimensões do retângulo
     xy = points[0];
 
-    width = sqrt(
-                pow(points[1].getX() - points[0].getX(), 2) +
-                pow(points[1].getY() - points[0].getY(), 2)
-            );
+    width = sqrt(pow(points[1].getX() - points[0].getX(), 2) +
+                 pow(points[1].getY() - points[0].getY(), 2));
 
-    height = sqrt(
-                 pow(points[3].getX() - points[0].getX(), 2) +
-                 pow(points[3].getY() - points[0].getY(), 2)
-             );
+    height = sqrt(pow(points[3].getX() - points[0].getX(), 2) +
+                  pow(points[3].getY() - points[0].getY(), 2));
 }
+
+// Verifica se o clique está próximo do retangulo
 bool Rectangle::isNear(int clickX, int clickY)
 {
     Point p1 = xy;
-    Point p2 = Point(xy.getX() + width, xy.getY());
-    Point p3 = Point(xy.getX() + width, xy.getY() + height);
-    Point p4 = Point(xy.getX(), xy.getY() + height);
+    Point p2(xy.getX() + width, xy.getY());
+    Point p3(xy.getX() + width, xy.getY() + height);
+    Point p4(xy.getX(), xy.getY() + height);
 
-    // Verifica a distancia para cada lado
-    Line line;
-
-    // Funcao auxiliar para calcular a distancia
-    // do clique ao segmento.
-    auto nearLine =
-        [clickX, clickY](Point a, Point b)
+    auto nearLine = [clickX, clickY](Point a, Point b)
     {
         double dx = b.getX() - a.getX();
         double dy = b.getY() - a.getY();
-
         double lengthSquared = dx * dx + dy * dy;
 
         if (lengthSquared == 0)
         {
             double px = clickX - a.getX();
             double py = clickY - a.getY();
-
             return px * px + py * py <= 25;
         }
 
-        double t =
-            ((clickX - a.getX()) * dx +
-             (clickY - a.getY()) * dy) /
-            lengthSquared;
+        double t = ((clickX - a.getX()) * dx + (clickY - a.getY()) * dy) / lengthSquared;
 
-        if (t < 0)
-        {
-            t = 0;
-        }
-
-        if (t > 1)
-        {
-            t = 1;
-        }
+        t = std::max(0.0, std::min(1.0, t));
 
         double closestX = a.getX() + t * dx;
         double closestY = a.getY() + t * dy;
-
         double distanceX = clickX - closestX;
         double distanceY = clickY - closestY;
 
-        return distanceX * distanceX +
-               distanceY * distanceY <= 25;
+        return distanceX * distanceX + distanceY * distanceY <= 25;
     };
 
-    return nearLine(p1, p2) ||
-           nearLine(p2, p3) ||
-           nearLine(p3, p4) ||
-           nearLine(p4, p1);
+    return nearLine(p1, p2) || nearLine(p2, p3) || nearLine(p3, p4) || nearLine(p4, p1);
+}
+
+// Escala o retangulo usando um ponto de referencia
+void Rectangle::scaleFromMouse(double sx, double sy, Point reference)
+{
+    Point points[4] = {
+        Point(xy.getX(), xy.getY()),
+        Point(xy.getX() + width, xy.getY()),
+        Point(xy.getX() + width, xy.getY() + height),
+        Point(xy.getX(), xy.getY() + height)
+    };
+
+    Transform transform;
+    transform.scale(points, 4, sx, sy, reference);
+
+    int minX = points[0].getX();
+    int minY = points[0].getY();
+    int maxX = points[0].getX();
+    int maxY = points[0].getY();
+
+    for (int i = 1; i < 4; i++)
+    {
+        minX = std::min(minX, points[i].getX());
+        minY = std::min(minY, points[i].getY());
+        maxX = std::max(maxX, points[i].getX());
+        maxY = std::max(maxY, points[i].getY());
+    }
+
+    xy = Point(minX, minY);
+    width = maxX - minX;
+    height = maxY - minY;
 }

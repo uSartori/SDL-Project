@@ -26,84 +26,61 @@ int curvePointCount = 0;
 // Controle do poligono
 list<Point> polygonPoints;
 
-// Controle temporário do desenho da linha
+// Controle temporário do desenho
 bool drawing = false;
 Point startPoint;
 Point currentPoint;
+
+// Controle da figura selecionada
+Canvas::HandleType activeHandle = Canvas::HANDLE_NONE;
+bool transforming = false;
+Point lastMousePosition;
 
 // Desenha o conteúdo do Canvas e a interface
 void display(Canvas& canvas, Toolbar& toolbar)
 {
     Context* context = Context::getInstance();
 
-    // Desenha somente dentro do Canvas
     context->setViewport(0, 40, 640, 440);
-
     canvas.draw();
 
-    // Aparece a preview da linha conforme o usuario move o mouse
+    // Preview da linha
     if (drawing && toolbar.getCurrentTool() == TOOL_LINE)
     {
-        Line preview(
-            startPoint,
-            currentPoint,
-            Color(0, 0, 0)
-        );
-
+        Line preview(startPoint, currentPoint, Color(0, 0, 0));
         preview.draw();
     }
 
-    // Aparece a preview do retangulo conforme o usuario move o mouse
+    // Preview do retangulo
     if (drawing && toolbar.getCurrentTool() == TOOL_RECTANGLE)
     {
-        Rectangle preview(
-            startPoint,
-            currentPoint,
-            Color(0, 0, 0)
-        );
-
+        Rectangle preview(startPoint, currentPoint, Color(0, 0, 0));
         preview.draw();
     }
 
-    // Aparece a preview do circulo conforme o usuario move o mouse
+    // Preview do circulo
     if (drawing && toolbar.getCurrentTool() == TOOL_CIRCLE)
     {
         double dx = currentPoint.getX() - startPoint.getX();
         double dy = currentPoint.getY() - startPoint.getY();
-
-        // O raio eh a distancia entre os dois pontos dx e dy
         double radius = sqrt(dx * dx + dy * dy);
 
-        Circle preview(
-            startPoint,
-            radius,
-            Color(0, 0, 0)
-        );
-
+        Circle preview(startPoint, radius, Color(0, 0, 0));
         preview.draw();
     }
 
-    // Mostra as linhas do poligono conforme os pontos sao adicionados
-    if (toolbar.getCurrentTool() == TOOL_POLYGON &&
-            polygonPoints.size() >= 2)
+    // Mostra os segmentos do poligono
+    if (toolbar.getCurrentTool() == TOOL_POLYGON && polygonPoints.size() >= 2)
     {
         Line line;
         Point anterior = polygonPoints.front();
-
         int i = 0;
 
         for (Point ponto : polygonPoints)
         {
             if (i > 0)
             {
-                line.drawWuLine(
-                    anterior.getX(),
-                    anterior.getY(),
-                    ponto.getX(),
-                    ponto.getY(),
-                    Color(0, 0, 0)
-                );
-
+                line.drawWuLine(anterior.getX(), anterior.getY(), ponto.getX(), ponto.getY(), Color(0, 0, 0));
                 anterior = ponto;
             }
 
@@ -111,64 +88,44 @@ void display(Canvas& canvas, Toolbar& toolbar)
         }
     }
 
-    // Permite que a Toolbar desenhe em toda a parte superior
     context->setViewport(0, 0, 640, 40);
-
     toolbar.render();
 }
 
 int main()
 {
-    // SDL
     SDL_Window* pWindow = nullptr;
     SDL_Renderer* pRenderer = nullptr;
     SDL_Surface* window_surface = nullptr;
     SDL_Event event;
 
     // Inicializa o SDL
-    if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+        return 1;
+
+    // Cria a janela
+    pWindow = SDL_CreateWindow("SDL_Classes", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
+
+    if (pWindow == nullptr)
     {
-        // Cria a janela
-        pWindow = SDL_CreateWindow(
-                      "SDL_Classes",
-                      SDL_WINDOWPOS_CENTERED,
-                      SDL_WINDOWPOS_CENTERED,
-                      640,
-                      480,
-                      SDL_WINDOW_SHOWN
-                  );
-
-        if (pWindow != nullptr)
-        {
-            pRenderer = SDL_CreateRenderer(
-                            pWindow,
-                            -1,
-                            0
-                        );
-
-            window_surface = SDL_GetWindowSurface(pWindow);
-
-            // Inicializa o contexto grafico da aplicacao
-            Context* context = Context::getInstance();
-
-            context->setRenderer(pRenderer);
-            context->setWindowSurface(window_surface);
-        }
-    }
-    else
-    {
+        SDL_Quit();
         return 1;
     }
+
+    pRenderer = SDL_CreateRenderer(pWindow, -1, 0);
+    window_surface = SDL_GetWindowSurface(pWindow);
+
+    // Inicializa o contexto grafico
+    Context* context = Context::getInstance();
+    context->setRenderer(pRenderer);
+    context->setWindowSurface(window_surface);
 
     Canvas canvas(640, 440);
     Toolbar toolbar(640, 40);
 
     while (1)
     {
-        // Limpa a tela
         canvas.clear();
-
-        // Realiza o desenho
         display(canvas, toolbar);
 
         while (SDL_PollEvent(&event))
@@ -180,219 +137,193 @@ int main()
                 return 0;
             }
 
-            // Primeiro deixa a Toolbar tratar o evento
+            // Primeiro a Toolbar trata o evento
             bool clickedUI = toolbar.handleEvent(event);
 
-            // Se o evento nao pertence a Toolbar, trata o Canvas
-            if (!clickedUI)
+            if (clickedUI)
+                continue;
+
+            // Mouse pressionado
+            if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
             {
-                // Mouse pressionado
-                if (event.type == SDL_MOUSEBUTTONDOWN &&
-                        event.button.button == SDL_BUTTON_LEFT)
+                Point clickPoint(event.button.x, event.button.y);
+
+                // Ferramenta de selecao
+                if (toolbar.getCurrentTool() == TOOL_SELECT)
                 {
-                    Point clickPoint(
-                        event.button.x,
-                        event.button.y
-                    );
+                    Canvas::HandleType handle = canvas.getHandleAt(event.button.x, event.button.y);
 
-                    // Seleciona uma figura ja desenhada
-                    if (toolbar.getCurrentTool() == TOOL_SELECT)
+                    if (handle != Canvas::HANDLE_NONE)
                     {
-                        canvas.selectShape(
-                            event.button.x,
-                            event.button.y
-                        );
-                    }
+                        activeHandle = handle;
+                        transforming = true;
+                        lastMousePosition = clickPoint;
 
-                    // Criacao de uma figura que precise de dois pontos para ser criada
-                    else if (toolbar.getCurrentTool() == TOOL_LINE
-                             || toolbar.getCurrentTool() == TOOL_RECTANGLE
-                             || toolbar.getCurrentTool() == TOOL_CIRCLE)
-                    {
-                        drawing = true;
-
-                        startPoint = clickPoint;
-                        currentPoint = clickPoint;
-                    }
-
-                    // Curva utiliza quatro cliques para definir os quatro pontos
-                    else if (toolbar.getCurrentTool() == TOOL_CURVE)
-                    {
-                        if (curvePointCount < 4)
+                        // Inicia a escala
+                        if (handle == Canvas::HANDLE_SCALE_TOP_LEFT ||
+                            handle == Canvas::HANDLE_SCALE_TOP_RIGHT ||
+                            handle == Canvas::HANDLE_SCALE_BOTTOM_LEFT ||
+                            handle == Canvas::HANDLE_SCALE_BOTTOM_RIGHT)
                         {
-                            curvePoints[curvePointCount] = clickPoint;
-                            curvePointCount++;
-
-                            // Cria a curva somente depois do quarto clique
-                            if (curvePointCount == 4)
-                            {
-                                Curve* curve = new Curve(
-                                    curvePoints,
-                                    Color(0, 0, 0)
-                                );
-
-                                canvas.addShape(curve);
-
-                                curvePointCount = 0;
-                            }
+                            canvas.startScale(handle, event.button.x, event.button.y);
                         }
                     }
-
-                    // Adiciona um ponto ao poligono conforme clique do mouse
-                    else if (toolbar.getCurrentTool() == TOOL_POLYGON)
+                    else
                     {
-                        polygonPoints.push_back(clickPoint);
-                    }
-
-                    // Executa o Flood Fill no ponto clicado
-                    else if (toolbar.getCurrentTool() == TOOL_FLOOD_FILL)
-                    {
-                        canvas.addFloodFill(
-                            Point(event.button.x, event.button.y),
-                            Color(255, 0, 0)
-                        );
+                        canvas.selectShape(event.button.x, event.button.y);
+                        transforming = false;
+                        activeHandle = Canvas::HANDLE_NONE;
                     }
                 }
 
-                // Mouse movimentando
-                // Mouse movimentando
-                if (event.type == SDL_MOUSEMOTION && drawing)
+                // Ferramentas que usam dois pontos
+                else if (toolbar.getCurrentTool() == TOOL_LINE ||
+                         toolbar.getCurrentTool() == TOOL_RECTANGLE ||
+                         toolbar.getCurrentTool() == TOOL_CIRCLE)
                 {
-                    currentPoint = Point(
-                                       event.motion.x,
-                                       event.motion.y
-                                   );
-
-                    // Não permite desenhar fora da área do Canvas
-                    if (currentPoint.getX() < 0)
-                    {
-                        currentPoint.setX(0);
-                    }
-
-                    if (currentPoint.getX() >= 640)
-                    {
-                        currentPoint.setX(639);
-                    }
-
-                    if (currentPoint.getY() < 40)
-                    {
-                        currentPoint.setY(40);
-                    }
-
-                    if (currentPoint.getY() >= 480)
-                    {
-                        currentPoint.setY(479);
-                    }
+                    drawing = true;
+                    startPoint = clickPoint;
+                    currentPoint = clickPoint;
                 }
 
-                // Mouse liberado
-                if (event.type == SDL_MOUSEBUTTONUP &&
-                        event.button.button == SDL_BUTTON_LEFT)
+                // Curva usa quatro pontos
+                else if (toolbar.getCurrentTool() == TOOL_CURVE)
                 {
-                    // Impede que gere um ponto fora da area do canvas gerando crash
-                    if (!canvas.isInside(event.button.x, event.button.y))
+                    if (curvePointCount < 4)
                     {
-                        drawing = false;
-                        continue;
-                    }
+                        curvePoints[curvePointCount] = clickPoint;
+                        curvePointCount++;
 
-                    // Cria a linha quando o usuario soltar o click do mouse
-                    if (toolbar.getCurrentTool() == TOOL_LINE &&
-                            drawing)
-                    {
-                        Point endPoint(
-                            event.button.x,
-                            event.button.y
-                        );
-
-                        Line* line = new Line(
-                            startPoint,
-                            endPoint,
-                            Color(0, 0, 0)
-                        );
-
-                        canvas.addShape(line);
-
-                        drawing = false;
-                    }
-
-                    // Cria o retangulo quando o usuario soltar o click do mouse
-                    else if (toolbar.getCurrentTool() == TOOL_RECTANGLE &&
-                             drawing)
-                    {
-                        Point endPoint(
-                            event.button.x,
-                            event.button.y
-                        );
-
-                        Rectangle* rectangle = new Rectangle(
-                            startPoint,
-                            endPoint,
-                            Color(0, 0, 0)
-                        );
-
-                        canvas.addShape(rectangle);
-
-                        drawing = false;
-                    }
-
-                    // Cria o circulo quando o usuario soltar o click do mouse
-                    else if (toolbar.getCurrentTool() == TOOL_CIRCLE &&
-                             drawing)
-                    {
-                        Point endPoint(
-                            event.button.x,
-                            event.button.y
-                        );
-
-                        double dx =
-                            endPoint.getX() - startPoint.getX();
-
-                        double dy =
-                            endPoint.getY() - startPoint.getY();
-
-                        double radius =
-                            sqrt(dx * dx + dy * dy);
-
-                        Circle* circle = new Circle(
-                            startPoint,
-                            radius,
-                            Color(0, 0, 0)
-                        );
-
-                        canvas.addShape(circle);
-
-                        drawing = false;
-                    }
-
-                    // A curva nao eh criada aqui pois precisa de quatro cliques
-                }
-
-                // Apertar botao direito do mouse completa o poligono
-                if (event.type == SDL_MOUSEBUTTONDOWN &&
-                        event.button.button == SDL_BUTTON_RIGHT)
-                {
-                    if (toolbar.getCurrentTool() == TOOL_POLYGON)
-                    {
-                        if (polygonPoints.size() >= 3)
+                        if (curvePointCount == 4)
                         {
-                            Polygon* polygon = new Polygon(
-                                polygonPoints,
-                                Color(0, 0, 0)
-                            );
-
-                            canvas.addShape(polygon);
-
-                            polygonPoints.clear();
+                            Curve* curve = new Curve(curvePoints, Color(0, 0, 0));
+                            canvas.addShape(curve);
+                            curvePointCount = 0;
                         }
                     }
+                }
+
+                // Adiciona pontos ao poligono
+                else if (toolbar.getCurrentTool() == TOOL_POLYGON)
+                {
+                    polygonPoints.push_back(clickPoint);
+                }
+
+                // Executa o Flood Fill
+                else if (toolbar.getCurrentTool() == TOOL_FLOOD_FILL)
+                {
+                    canvas.addFloodFill(clickPoint, Color(255, 0, 0));
+                }
+            }
+
+            // Mouse movimentando durante um desenho
+            if (event.type == SDL_MOUSEMOTION && drawing)
+            {
+                currentPoint = Point(event.motion.x, event.motion.y);
+
+                currentPoint.setX(std::max(0, std::min(639, currentPoint.getX())));
+                currentPoint.setY(std::max(40, std::min(479, currentPoint.getY())));
+            }
+
+            // Mouse movimentando durante uma transformacao
+            if (event.type == SDL_MOUSEMOTION && transforming)
+            {
+                Shape* selectedShape = canvas.getSelectedShape();
+
+                if (selectedShape != nullptr)
+                {
+                    int mouseX = event.motion.x;
+                    int mouseY = event.motion.y;
+
+                    double dx = mouseX - lastMousePosition.getX();
+                    double dy = mouseY - lastMousePosition.getY();
+
+                    // Movimentacao
+                    if (activeHandle == Canvas::HANDLE_TRANSLATE)
+                    {
+                        selectedShape->translate(dx, dy);
+                    }
+
+                    // Escala
+                    else if (activeHandle == Canvas::HANDLE_SCALE_TOP_LEFT ||
+                             activeHandle == Canvas::HANDLE_SCALE_TOP_RIGHT ||
+                             activeHandle == Canvas::HANDLE_SCALE_BOTTOM_LEFT ||
+                             activeHandle == Canvas::HANDLE_SCALE_BOTTOM_RIGHT)
+                    {
+                        canvas.updateScale(activeHandle, mouseX, mouseY);
+                    }
+
+                    // Rotacao
+                    else if (activeHandle == Canvas::HANDLE_ROTATE)
+                    {
+                        // Vamos implementar depois
+                    }
+
+                    lastMousePosition = Point(mouseX, mouseY);
+                }
+            }
+
+            // Mouse liberado
+            if (event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT)
+            {
+                // Finaliza uma transformacao
+                if (transforming)
+                {
+                    transforming = false;
+                    activeHandle = Canvas::HANDLE_NONE;
+                    continue;
+                }
+
+                // Evita criar figuras fora do Canvas
+                if (!canvas.isInside(event.button.x, event.button.y))
+                {
+                    drawing = false;
+                    continue;
+                }
+
+                // Cria a linha
+                if (toolbar.getCurrentTool() == TOOL_LINE && drawing)
+                {
+                    Line* line = new Line(startPoint, Point(event.button.x, event.button.y), Color(0, 0, 0));
+                    canvas.addShape(line);
+                    drawing = false;
+                }
+
+                // Cria o retangulo
+                else if (toolbar.getCurrentTool() == TOOL_RECTANGLE && drawing)
+                {
+                    Rectangle* rectangle = new Rectangle(startPoint, Point(event.button.x, event.button.y), Color(0, 0, 0));
+                    canvas.addShape(rectangle);
+                    drawing = false;
+                }
+
+                // Cria o circulo
+                else if (toolbar.getCurrentTool() == TOOL_CIRCLE && drawing)
+                {
+                    Point endPoint(event.button.x, event.button.y);
+                    double dx = endPoint.getX() - startPoint.getX();
+                    double dy = endPoint.getY() - startPoint.getY();
+                    double radius = sqrt(dx * dx + dy * dy);
+
+                    Circle* circle = new Circle(startPoint, radius, Color(0, 0, 0));
+                    canvas.addShape(circle);
+                    drawing = false;
+                }
+            }
+
+            // Botao direito finaliza o poligono
+            if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT)
+            {
+                if (toolbar.getCurrentTool() == TOOL_POLYGON && polygonPoints.size() >= 3)
+                {
+                    Polygon* polygon = new Polygon(polygonPoints, Color(0, 0, 0));
+                    canvas.addShape(polygon);
+                    polygonPoints.clear();
                 }
             }
         }
 
-        // Atualiza a janela
         SDL_UpdateWindowSurface(pWindow);
-
         usleep(10000);
     }
 }

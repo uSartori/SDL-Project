@@ -23,6 +23,7 @@ public:
     void scale(double sx, double sy) override;
     void rotate(double angle) override;
     bool isNear(int x, int y) override;
+    void scaleFromMouse( double sx, double sy, Point reference) override;
 
     void drawBresenhamCircle(Point xy, double radius, Color cor);
 

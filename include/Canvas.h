@@ -2,7 +2,7 @@
 #define CANVAS_H
 
 #include <vector>
-#include <SDL2/SDL.h>
+#include <list>
 
 #include "Shape.h"
 #include "Point.h"
@@ -11,23 +11,33 @@
 class Canvas
 {
 public:
+    enum HandleType
+    {
+        HANDLE_NONE,
+        HANDLE_SCALE_TOP_LEFT,
+        HANDLE_SCALE_TOP_RIGHT,
+        HANDLE_SCALE_BOTTOM_LEFT,
+        HANDLE_SCALE_BOTTOM_RIGHT,
+        HANDLE_ROTATE,
+        HANDLE_TRANSLATE
+    };
+
     Canvas(int width, int height);
     ~Canvas();
 
     void addShape(Shape* shape);
-    void addFloodFill(Point startPoint, Color newColor);
-
     void draw();
     void clear();
-
-    bool isInside(int x, int y) const;
-
+    bool isInside(int px, int py) const;
     std::vector<Shape*>& getShapes();
-
-    void selectShape(int x, int y);
     Shape* getSelectedShape();
-
-    //void deleteSelectedShape();         <- ainda vou implementar
+    void addFloodFill(Point startPoint, Color newColor);
+    void selectShape(int px, int py);
+    void drawSelectionIndicator();
+    void drawSelectionHandles();
+    HandleType getHandleAt(int mouseX, int mouseY);
+    void startScale(HandleType handle, int mouseX, int mouseY);
+    void updateScale(HandleType handle, int mouseX, int mouseY);
 
 private:
     struct Fill
@@ -38,7 +48,6 @@ private:
 
     int width;
     int height;
-
     int x;
     int y;
 
@@ -46,7 +55,22 @@ private:
     std::vector<Fill> fills;
 
     Shape* selectedShape;
-    void drawSelectionIndicator();
+
+    Point scaleStartMouse;
+    Point scaleReference;
+
+    double originalWidth;
+    double originalHeight;
+
+    std::vector<Point> originalScalePoints;
+    std::vector<Point> originalCurvePoints;
+
+    bool getShapeBounds(Shape* shape, int& minX, int& minY, int& maxX, int& maxY);
+    double distanceToSegment(int px, int py, Point p1, Point p2);
+    bool isPointNearShape(Shape* shape, int px, int py, double tolerance);
+
+    void drawHandle(int x, int y, Color color);
+    void drawBoundingBox(int minX, int minY, int maxX, int maxY, Color color);
 };
 
-#endif // CANVAS_H
+#endif

@@ -428,114 +428,84 @@ void Line::bresenham(int x1, int y1, int x2, int y2, int r, int g, int b)
 // Translada a linha
 void Line::translate(double tx, double ty)
 {
+    Point points[2] = {start, end};
+
     Transform transform;
-
-    Point points[2];
-
-    points[0] = start;
-    points[1] = end;
-
     transform.translate(points, 2, tx, ty);
 
     start = points[0];
     end = points[1];
 }
 
-// Escala a linha
+// Escala a linha usando o inicio como referencia
 void Line::scale(double sx, double sy)
 {
+    Point points[2] = {start, end};
+
     Transform transform;
-
-    Point points[2];
-
-    points[0] = start;
-    points[1] = end;
-
-    Point reference = start;
-
-    transform.scale(points, 2, sx, sy, reference);
+    transform.scale(points, 2, sx, sy, start);
 
     start = points[0];
     end = points[1];
 }
 
-// Rotaciona a linha
+// Rotaciona a linha usando o inicio como referencia
 void Line::rotate(double angle)
 {
+    Point points[2] = {start, end};
+
     Transform transform;
-
-    Point points[2];
-
-    points[0] = start;
-    points[1] = end;
-
-    Point reference = start;
-
-    transform.rotate(points, 2, angle, reference);
+    transform.rotate(points, 2, angle, start);
 
     start = points[0];
     end = points[1];
 }
 
+// Verifica se o clique está perto da linha
 bool Line::isNear(int clickX, int clickY)
 {
-    int x1 = start.getX();
-    int y1 = start.getY();
-
-    int x2 = end.getX();
-    int y2 = end.getY();
-
-    double dx = x2 - x1;
-    double dy = y2 - y1;
-
+    double dx = end.getX() - start.getX();
+    double dy = end.getY() - start.getY();
     double lengthSquared = dx * dx + dy * dy;
 
-    // Caso especial: linha com apenas um pixel
     if (lengthSquared == 0)
     {
-        int diffX = clickX - x1;
-        int diffY = clickY - y1;
-
+        double diffX = clickX - start.getX();
+        double diffY = clickY - start.getY();
         return diffX * diffX + diffY * diffY <= 25;
     }
 
-    // Projeta o ponto do clique sobre a linha
-    double t =
-        ((clickX - x1) * dx +
-         (clickY - y1) * dy) / lengthSquared;
+    double t = ((clickX - start.getX()) * dx + (clickY - start.getY()) * dy) / lengthSquared;
+    t = std::max(0.0, std::min(1.0, t));
 
-    // Mantém a projeção dentro do segmento
-    if (t < 0)
-    {
-        t = 0;
-    }
-
-    if (t > 1)
-    {
-        t = 1;
-    }
-
-    double closestX = x1 + t * dx;
-    double closestY = y1 + t * dy;
-
+    double closestX = start.getX() + t * dx;
+    double closestY = start.getY() + t * dy;
     double distanceX = clickX - closestX;
     double distanceY = clickY - closestY;
 
-    // Distância euclidiana ao quadrado
-    double distanceSquared =
-        distanceX * distanceX +
-        distanceY * distanceY;
-
-    // 5 pixels -> 5² = 25
-    return distanceSquared <= 25;
+    return distanceX * distanceX + distanceY * distanceY <= 25;
 }
 
+// Retorna o ponto inicial
 Point Line::getStart()
 {
     return start;
 }
 
+// Retorna o ponto final
 Point Line::getEnd()
 {
     return end;
+}
+
+// Escala a linha usando um ponto de referencia
+void Line::scaleFromMouse(double sx, double sy, Point reference)
+{
+    Point points[2] = {start, end};
+
+    Transform transform;
+    transform.scale(points, 2, sx, sy, reference);
+
+    start = points[0];
+    end = points[1];
 }

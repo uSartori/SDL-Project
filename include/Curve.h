@@ -4,6 +4,7 @@
 #include <Point.h>
 #include <Color.h>
 #include "Shape.h"
+#include "Point.h"
 
 class Curve : public Shape
 {
@@ -23,6 +24,7 @@ public:
     void scale(double sx, double sy);
     void rotate(double angle);
     bool isNear(int x, int y) override;
+    void scaleFromMouse( double sx, double sy, Point reference) override;
 
     virtual ~Curve();
 

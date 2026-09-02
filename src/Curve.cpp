@@ -4,41 +4,44 @@
 
 #include <cmath>
 
+// Construtor vazio
 Curve::Curve()
 {
-    // ctor
 }
 
+// Cria uma curva com 4 pontos
 Curve::Curve(Point points[], Color color)
 {
     for (int i = 0; i < 4; i++)
-    {
         this->points[i] = points[i];
-    }
 
     this->color = color;
 }
 
+// Destrutor
 Curve::~Curve()
 {
-    // dtor
 }
 
+// Retorna um ponto
 Point Curve::getPoint(int index)
 {
     return points[index];
 }
 
+// Retorna a cor
 Color Curve::getColor()
 {
     return color;
 }
 
+// Altera um ponto
 void Curve::setPoint(int index, Point point)
 {
     points[index] = point;
 }
 
+// Altera a cor
 void Curve::setColor(Color color)
 {
     this->color = color;
@@ -47,32 +50,27 @@ void Curve::setColor(Color color)
 // Desenha a curva de Bezier
 void Curve::drawBezierCurve(Point points[], Color color)
 {
-    float t;
-    float x, y;
-
     Line line;
 
-    for (t = 0.0; t <= 1.0; t += 0.001)
+    for (double t = 0.0; t <= 1.0; t += 0.001)
     {
-        x = pow(1 - t, 3) * points[0].getX()
-          + 3 * pow(1 - t, 2) * t * points[1].getX()
-          + 3 * (1 - t) * pow(t, 2) * points[2].getX()
-          + pow(t, 3) * points[3].getX();
+        double x =
+            pow(1 - t, 3) * points[0].getX() +
+            3 * pow(1 - t, 2) * t * points[1].getX() +
+            3 * (1 - t) * pow(t, 2) * points[2].getX() +
+            pow(t, 3) * points[3].getX();
 
-        y = pow(1 - t, 3) * points[0].getY()
-          + 3 * pow(1 - t, 2) * t * points[1].getY()
-          + 3 * (1 - t) * pow(t, 2) * points[2].getY()
-          + pow(t, 3) * points[3].getY();
+        double y =
+            pow(1 - t, 3) * points[0].getY() +
+            3 * pow(1 - t, 2) * t * points[1].getY() +
+            3 * (1 - t) * pow(t, 2) * points[2].getY() +
+            pow(t, 3) * points[3].getY();
 
-        line.setPixel(
-            (int)x,
-            (int)y,
-            color
-        );
+        line.setPixel((int)x, (int)y, color);
     }
 }
 
-// Função padrao do Shape
+// Desenha a curva
 void Curve::draw()
 {
     drawBezierCurve(points, color);
@@ -82,7 +80,6 @@ void Curve::draw()
 void Curve::translate(double tx, double ty)
 {
     Transform transform;
-
     transform.translate(points, 4, tx, ty);
 }
 
@@ -90,51 +87,46 @@ void Curve::translate(double tx, double ty)
 void Curve::scale(double sx, double sy)
 {
     Transform transform;
-
-    Point reference = points[0];
-
-    transform.scale(points, 4, sx, sy, reference);
+    transform.scale(points, 4, sx, sy, points[0]);
 }
 
 // Rotaciona a curva
 void Curve::rotate(double angle)
 {
     Transform transform;
-
-    Point reference = points[0];
-
-    transform.rotate(points, 4, angle, reference);
+    transform.rotate(points, 4, angle, points[0]);
 }
 
+// Verifica se o clique está perto da curva
 bool Curve::isNear(int clickX, int clickY)
 {
-    for (float t = 0.0f; t <= 1.0f; t += 0.001f)
+    for (double t = 0.0; t <= 1.0; t += 0.001)
     {
-        float x =
-            pow(1 - t, 3) * points[0].getX()
-            + 3 * pow(1 - t, 2) * t * points[1].getX()
-            + 3 * (1 - t) * pow(t, 2) * points[2].getX()
-            + pow(t, 3) * points[3].getX();
+        double x =
+            pow(1 - t, 3) * points[0].getX() +
+            3 * pow(1 - t, 2) * t * points[1].getX() +
+            3 * (1 - t) * pow(t, 2) * points[2].getX() +
+            pow(t, 3) * points[3].getX();
 
-        float y =
-            pow(1 - t, 3) * points[0].getY()
-            + 3 * pow(1 - t, 2) * t * points[1].getY()
-            + 3 * (1 - t) * pow(t, 2) * points[2].getY()
-            + pow(t, 3) * points[3].getY();
+        double y =
+            pow(1 - t, 3) * points[0].getY() +
+            3 * pow(1 - t, 2) * t * points[1].getY() +
+            3 * (1 - t) * pow(t, 2) * points[2].getY() +
+            pow(t, 3) * points[3].getY();
 
-        int pixelX = (int)x;
-        int pixelY = (int)y;
+        int dx = clickX - (int)x;
+        int dy = clickY - (int)y;
 
-        int dx = clickX - pixelX;
-        int dy = clickY - pixelY;
-
-        // Distancia euclidiana ao quadrado.
-        // 5 pixels -> 25.
         if (dx * dx + dy * dy <= 25)
-        {
             return true;
-        }
     }
 
     return false;
+}
+
+// Escala a curva usando um ponto de referencia
+void Curve::scaleFromMouse(double sx, double sy, Point reference)
+{
+    Transform transform;
+    transform.scale(points, 4, sx, sy, reference);
 }

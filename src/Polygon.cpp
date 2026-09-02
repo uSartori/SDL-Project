@@ -2,72 +2,69 @@
 #include "Context.h"
 #include "Line.h"
 #include "Transform.h"
+#include <algorithm>
 
+// Construtor vazio
 Polygon::Polygon()
 {
-    // ctor
 }
 
+// Destrutor
 Polygon::~Polygon()
 {
-    // dtor
 }
 
+// Cria um poligono
 Polygon::Polygon(list<Point> pontos, Color color)
 {
     this->pontos = pontos;
     this->color = color;
 }
 
+// Retorna os pontos
 list<Point> Polygon::getPontos()
 {
     return pontos;
 }
 
+// Retorna a cor
 Color Polygon::getColor()
 {
     return color;
 }
 
+// Altera os pontos
 void Polygon::setPontos(list<Point> pontos)
 {
     this->pontos = pontos;
 }
 
+// Altera a cor
 void Polygon::setColor(Color color)
 {
     this->color = color;
 }
 
-// Desenha o poligono ligando cada ponto ao proximo
+// Desenha o poligono ligando os pontos
 void Polygon::drawPolygon(list<Point> pontos, Color cor)
 {
     if (pontos.size() < 2)
-    {
         return;
-    }
 
     Point primeiro = pontos.front();
-    Point anterior = pontos.front();
+    Point anterior = primeiro;
     Point atual;
 
     int i = 0;
 
-    for (Point p : pontos)
+    for (Point ponto : pontos)
     {
         if (i > 0)
         {
-            atual = p;
+            atual = ponto;
 
             Line line;
-
-            line.drawWuLine(
-                anterior.getX(),
-                anterior.getY(),
-                atual.getX(),
-                atual.getY(),
-                cor
-            );
+            line.drawWuLine(anterior.getX(), anterior.getY(), atual.getX(), atual.getY(), cor);
 
             anterior = atual;
         }
@@ -76,235 +73,155 @@ void Polygon::drawPolygon(list<Point> pontos, Color cor)
     }
 
     Line line;
-
-    line.drawWuLine(
-        atual.getX(),
-        atual.getY(),
-        primeiro.getX(),
-        primeiro.getY(),
-        cor
-    );
+    line.drawWuLine(atual.getX(), atual.getY(), primeiro.getX(), primeiro.getY(), cor);
 }
+
 // Desenha o poligono
 void Polygon::draw()
 {
     drawPolygon(pontos, color);
 }
 
-// Translada todos os pontos do poligono
+// Translada os pontos do poligono
 void Polygon::translate(double tx, double ty)
 {
-    Transform transform;
+    if (pontos.empty())
+        return;
 
     int numPoints = pontos.size();
-
-    if (numPoints == 0)
-    {
-        return;
-    }
-
-    Point points[numPoints];
+    Point* points = new Point[numPoints];
 
     int i = 0;
 
-    for (Point p : pontos)
-    {
-        points[i] = p;
-        i++;
-    }
+    for (Point point : pontos)
+        points[i++] = point;
 
+    Transform transform;
     transform.translate(points, numPoints, tx, ty);
 
     pontos.clear();
 
-    for (int i = 0; i < numPoints; i++)
-    {
+    for (i = 0; i < numPoints; i++)
         pontos.push_back(points[i]);
-    }
+
+    delete[] points;
 }
 
-// Altera o tamanho do poligono usando o primeiro ponto como referencia
+// Escala o poligono usando o primeiro ponto como referencia
 void Polygon::scale(double sx, double sy)
 {
-    Transform transform;
+    if (pontos.empty())
+        return;
 
     int numPoints = pontos.size();
-
-    if (numPoints == 0)
-    {
-        return;
-    }
-
-    Point points[numPoints];
+    Point* points = new Point[numPoints];
 
     int i = 0;
 
-    for (Point p : pontos)
-    {
-        points[i] = p;
-        i++;
-    }
+    for (Point point : pontos)
+        points[i++] = point;
 
-    Point reference = points[0];
-
-    transform.scale(
-        points,
-        numPoints,
-        sx,
-        sy,
-        reference
-    );
+    Transform transform;
+    transform.scale(points, numPoints, sx, sy, points[0]);
 
     pontos.clear();
 
-    for (int i = 0; i < numPoints; i++)
-    {
+    for (i = 0; i < numPoints; i++)
         pontos.push_back(points[i]);
-    }
+
+    delete[] points;
 }
 
 // Rotaciona o poligono usando o primeiro ponto como referencia
 void Polygon::rotate(double angle)
 {
-    Transform transform;
+    if (pontos.empty())
+        return;
 
     int numPoints = pontos.size();
-
-    if (numPoints == 0)
-    {
-        return;
-    }
-
-    Point points[numPoints];
+    Point* points = new Point[numPoints];
 
     int i = 0;
 
-    for (Point p : pontos)
-    {
-        points[i] = p;
-        i++;
-    }
+    for (Point point : pontos)
+        points[i++] = point;
 
-    Point reference = points[0];
-
-    transform.rotate(
-        points,
-        numPoints,
-        angle,
-        reference
-    );
+    Transform transform;
+    transform.rotate(points, numPoints, angle, points[0]);
 
     pontos.clear();
 
-    for (int i = 0; i < numPoints; i++)
-    {
+    for (i = 0; i < numPoints; i++)
         pontos.push_back(points[i]);
-    }
+
+    delete[] points;
 }
 
+// Verifica se o clique está perto do poligono
 bool Polygon::isNear(int clickX, int clickY)
 {
     if (pontos.size() < 2)
-    {
         return false;
-    }
 
-    auto it1 = pontos.begin();
-    auto it2 = std::next(it1);
-
-    while (it2 != pontos.end())
+    auto nearLine = [clickX, clickY](Point a, Point b)
     {
-        Point a = *it1;
-        Point b = *it2;
-
         double dx = b.getX() - a.getX();
         double dy = b.getY() - a.getY();
-
         double lengthSquared = dx * dx + dy * dy;
 
         if (lengthSquared == 0)
         {
             double px = clickX - a.getX();
             double py = clickY - a.getY();
-
-            if (px * px + py * py <= 25)
-            {
-                return true;
-            }
-        }
-        else
-        {
-            double t =
-                ((clickX - a.getX()) * dx +
-                 (clickY - a.getY()) * dy) /
-                lengthSquared;
-
-            if (t < 0)
-            {
-                t = 0;
-            }
-
-            if (t > 1)
-            {
-                t = 1;
-            }
-
-            double closestX = a.getX() + t * dx;
-            double closestY = a.getY() + t * dy;
-
-            double distanceX = clickX - closestX;
-            double distanceY = clickY - closestY;
-
-            if (distanceX * distanceX +
-                    distanceY * distanceY <= 25)
-            {
-                return true;
-            }
+            return px * px + py * py <= 25;
         }
 
-        ++it1;
-        ++it2;
-    }
+        double t = ((clickX - a.getX()) * dx + (clickY - a.getY()) * dy) / lengthSquared;
+        t = std::max(0.0, std::min(1.0, t));
 
-    // Verifica também o ultimo lado:
-    // ultimo ponto -> primeiro ponto
+        double closestX = a.getX() + t * dx;
+        double closestY = a.getY() + t * dy;
+        double distanceX = clickX - closestX;
+        double distanceY = clickY - closestY;
+
+        return distanceX * distanceX + distanceY * distanceY <= 25;
+    };
+
     Point first = pontos.front();
-    Point last = pontos.back();
+    Point previous = first;
 
-    double dx = first.getX() - last.getX();
-    double dy = first.getY() - last.getY();
-
-    double lengthSquared = dx * dx + dy * dy;
-
-    if (lengthSquared == 0)
+    for (auto it = std::next(pontos.begin()); it != pontos.end(); ++it)
     {
-        double px = clickX - last.getX();
-        double py = clickY - last.getY();
+        if (nearLine(previous, *it))
+            return true;
 
-        return px * px + py * py <= 25;
+        previous = *it;
     }
 
-    double t =
-        ((clickX - last.getX()) * dx +
-         (clickY - last.getY()) * dy) /
-        lengthSquared;
+    return nearLine(previous, first);
+}
 
-    if (t < 0)
-    {
-        t = 0;
-    }
+// Escala o poligono usando um ponto de referencia
+void Polygon::scaleFromMouse(double sx, double sy, Point reference)
+{
+    if (pontos.empty())
+        return;
 
-    if (t > 1)
-    {
-        t = 1;
-    }
+    int numPoints = pontos.size();
+    Point* points = new Point[numPoints];
 
-    double closestX = last.getX() + t * dx;
-    double closestY = last.getY() + t * dy;
+    int i = 0;
 
-    double distanceX = clickX - closestX;
-    double distanceY = clickY - closestY;
+    for (Point point : pontos)
+        points[i++] = point;
 
-    return distanceX * distanceX +
-           distanceY * distanceY <= 25;
+    Transform transform;
+    transform.scale(points, numPoints, sx, sy, reference);
+
+    pontos.clear();
+
+    for (i = 0; i < numPoints; i++)
+        pontos.push_back(points[i]);
+
+    delete[] points;
 }

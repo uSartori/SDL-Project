@@ -1,721 +1,553 @@
 #include "Canvas.h"
 #include "Context.h"
 #include "Line.h"
-#include "FloodFill.h"
 #include "Circle.h"
 #include "Rectangle.h"
 #include "Polygon.h"
 #include "Curve.h"
+#include "FloodFill.h"
 
 #include <cmath>
 #include <algorithm>
 
+// Cria o Canvas e define sua posição
 Canvas::Canvas(int width, int height)
 {
     this->width = width;
     this->height = height;
-
-    // O Canvas começa abaixo da Toolbar
     this->x = 0;
     this->y = 40;
-
-    // Nenhuma figura começa selecionada
     this->selectedShape = nullptr;
 }
 
+// Libera as figuras do Canvas
 Canvas::~Canvas()
 {
     for (Shape* shape : shapes)
-    {
         delete shape;
-    }
 }
 
+// Adiciona uma figura no Canvas
 void Canvas::addShape(Shape* shape)
 {
     if (shape != nullptr)
-    {
         shapes.push_back(shape);
-    }
 }
 
+// Desenha as figuras e os controles da seleção
 void Canvas::draw()
 {
-    // Primeiro desenha as figuras
     for (Shape* shape : shapes)
-    {
         if (shape != nullptr)
-        {
             shape->draw();
-        }
-    }
 
-    // Depois reaplica os Flood Fills
     FloodFill floodFill;
 
     for (const Fill& fill : fills)
-    {
-        floodFill.fill(
-            fill.point,
-            fill.color
-        );
-    }
+        floodFill.fill(fill.point, fill.color);
 
-    // Desenha o indicador visual da figura selecionada
-    drawSelectionIndicator();
+    if (selectedShape != nullptr)
+    {
+        drawSelectionIndicator();
+        drawSelectionHandles();
+    }
 }
 
+// Limpa a área do Canvas
 void Canvas::clear()
 {
     Context* context = Context::getInstance();
-
-    // Define o viewport do Canvas
-    context->setViewport(
-        x,
-        y,
-        width,
-        height
-    );
+    context->setViewport(x, y, width, height);
 
     Line line;
 
-    // Limpa somente a área do Canvas
     for (int px = x; px < x + width; px++)
-    {
         for (int py = y; py < y + height; py++)
-        {
-            line.setPixel(
-                px,
-                py,
-                255,
-                255,
-                255
-            );
-        }
-    }
+            line.setPixel(px, py, 255, 255, 255);
 }
 
-// Verifica se um ponto pertence à área do Canvas
+// Verifica se o ponto está dentro do Canvas
 bool Canvas::isInside(int px, int py) const
 {
-    return px >= x &&
-           px < x + width &&
-           py >= y &&
-           py < y + height;
+    return px >= x && px < x + width && py >= y && py < y + height;
 }
 
+// Retorna as figuras do Canvas
 std::vector<Shape*>& Canvas::getShapes()
 {
     return shapes;
 }
 
+// Retorna a figura selecionada
+Shape* Canvas::getSelectedShape()
+{
+    return selectedShape;
+}
+
+// Guarda um Flood Fill para ser aplicado novamente
 void Canvas::addFloodFill(Point startPoint, Color newColor)
 {
-    // Verifica se o clique esta dentro do Canvas
-    if (!isInside(
-                startPoint.getX(),
-                startPoint.getY()))
-    {
+    if (!isInside(startPoint.getX(), startPoint.getY()))
         return;
-    }
 
-    // Guarda o Flood Fill
     Fill fill;
-
     fill.point = startPoint;
     fill.color = newColor;
-
     fills.push_back(fill);
 }
 
-// Seleciona uma figura pelo ponto clicado
+// Calcula os limites da figura
+bool Canvas::getShapeBounds(Shape* shape, int& minX, int& minY, int& maxX, int& maxY)
+{
+    if (shape == nullptr)
+        return false;
+
+    minX = 999999;
+    minY = 999999;
+    maxX = -999999;
+    maxY = -999999;
+
+    Line* line = dynamic_cast<Line*>(shape);
+
+    if (line != nullptr)
+    {
+        Point p1 = line->getStart();
+        Point p2 = line->getEnd();
+
+        minX = std::min(p1.getX(), p2.getX());
+        minY = std::min(p1.getY(), p2.getY());
+        maxX = std::max(p1.getX(), p2.getX());
+        maxY = std::max(p1.getY(), p2.getY());
+
+        return true;
+    }
+
+    Circle* circle = dynamic_cast<Circle*>(shape);
+
+    if (circle != nullptr)
+    {
+        Point center = circle->getXy();
+        double radius = circle->getRadius();
+
+        minX = center.getX() - radius;
+        minY = center.getY() - radius;
+        maxX = center.getX() + radius;
+        maxY = center.getY() + radius;
+
+        return true;
+    }
+
+    Rectangle* rectangle = dynamic_cast<Rectangle*>(shape);
+
+    if (rectangle != nullptr)
+    {
+        Point p = rectangle->getXy();
+
+        minX = p.getX();
+        minY = p.getY();
+        maxX = p.getX() + rectangle->getWidth();
+        maxY = p.getY() + rectangle->getHeight();
+
+        return true;
+    }
+
+    Polygon* polygon = dynamic_cast<Polygon*>(shape);
+
+    if (polygon != nullptr)
+    {
+        std::list<Point> points = polygon->getPontos();
+
+        if (points.empty())
+            return false;
+
+        for (Point point : points)
+        {
+            minX = std::min(minX, point.getX());
+            minY = std::min(minY, point.getY());
+            maxX = std::max(maxX, point.getX());
+            maxY = std::max(maxY, point.getY());
+        }
+
+        return true;
+    }
+
+    Curve* curve = dynamic_cast<Curve*>(shape);
+
+    if (curve != nullptr)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            Point point = curve->getPoint(i);
+
+            minX = std::min(minX, point.getX());
+            minY = std::min(minY, point.getY());
+            maxX = std::max(maxX, point.getX());
+            maxY = std::max(maxY, point.getY());
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+// Calcula a distância entre um ponto e uma linha
+double Canvas::distanceToSegment(int px, int py, Point p1, Point p2)
+{
+    double dx = p2.getX() - p1.getX();
+    double dy = p2.getY() - p1.getY();
+    double length2 = dx * dx + dy * dy;
+
+    double t = 0;
+
+    if (length2 != 0)
+        t = ((px - p1.getX()) * dx + (py - p1.getY()) * dy) / length2;
+
+    t = std::max(0.0, std::min(1.0, t));
+
+    double closestX = p1.getX() + t * dx;
+    double closestY = p1.getY() + t * dy;
+
+    double distanceX = px - closestX;
+    double distanceY = py - closestY;
+
+    return sqrt(distanceX * distanceX + distanceY * distanceY);
+}
+
+// Verifica se o ponto está próximo da figura
+bool Canvas::isPointNearShape(Shape* shape, int px, int py, double tolerance)
+{
+    if (shape == nullptr)
+        return false;
+
+    Line* line = dynamic_cast<Line*>(shape);
+
+    if (line != nullptr)
+        return distanceToSegment(px, py, line->getStart(), line->getEnd()) <= tolerance;
+
+    Circle* circle = dynamic_cast<Circle*>(shape);
+
+    if (circle != nullptr)
+    {
+        Point center = circle->getXy();
+        double dx = px - center.getX();
+        double dy = py - center.getY();
+        double distance = sqrt(dx * dx + dy * dy);
+
+        return fabs(distance - circle->getRadius()) <= tolerance;
+    }
+
+    Polygon* polygon = dynamic_cast<Polygon*>(shape);
+
+    if (polygon != nullptr)
+    {
+        std::list<Point> points = polygon->getPontos();
+
+        if (points.size() < 2)
+            return false;
+
+        Point previous = points.back();
+
+        for (Point current : points)
+        {
+            if (distanceToSegment(px, py, previous, current) <= tolerance)
+                return true;
+
+            previous = current;
+        }
+
+        return false;
+    }
+
+    Curve* curve = dynamic_cast<Curve*>(shape);
+
+    if (curve != nullptr)
+    {
+        Point previous = curve->getPoint(0);
+
+        for (double t = 0.001; t <= 1.0; t += 0.001)
+        {
+            double x = pow(1 - t, 3) * curve->getPoint(0).getX() + 3 * pow(1 - t, 2) * t * curve->getPoint(1).getX() + 3 * (1 - t) * pow(t, 2) * curve->getPoint(2).getX() + pow(t, 3) * curve->getPoint(3).getX();
+
+            double y = pow(1 - t, 3) * curve->getPoint(0).getY() + 3 * pow(1 - t, 2) * t * curve->getPoint(1).getY() + 3 * (1 - t) * pow(t, 2) * curve->getPoint(2).getY() + pow(t, 3) * curve->getPoint(3).getY();
+
+            Point current((int)x, (int)y);
+
+            if (distanceToSegment(px, py, previous, current) <= tolerance)
+                return true;
+
+            previous = current;
+        }
+    }
+
+    Rectangle* rectangle = dynamic_cast<Rectangle*>(shape);
+
+    if (rectangle != nullptr)
+    {
+        Point p = rectangle->getXy();
+
+        int left = p.getX();
+        int right = left + rectangle->getWidth();
+        int top = p.getY();
+        int bottom = top + rectangle->getHeight();
+
+        return distanceToSegment(px, py, Point(left, top), Point(right, top)) <= tolerance ||
+               distanceToSegment(px, py, Point(right, top), Point(right, bottom)) <= tolerance ||
+               distanceToSegment(px, py, Point(right, bottom), Point(left, bottom)) <= tolerance ||
+               distanceToSegment(px, py, Point(left, bottom), Point(left, top)) <= tolerance;
+    }
+
+    return false;
+}
+
+// Seleciona a figura clicada
 void Canvas::selectShape(int px, int py)
 {
-    // Se clicar fora do Canvas, remove a seleção
     if (!isInside(px, py))
     {
         selectedShape = nullptr;
         return;
     }
 
-    // Pixels entre o ponto do clique do mouse e um dos pixels que compoe o objeto
-    const double maxDistance = 5.0;
-
-    // A ultima figura desenhada sera selecionada primeiro
-    for (int i = shapes.size() - 1; i >= 0; i--)
+    for (int i = (int)shapes.size() - 1; i >= 0; i--)
     {
-        Shape* shape = shapes[i];
-
-        if (shape == nullptr)
+        if (isPointNearShape(shapes[i], px, py, 5.0))
         {
-            continue;
-        }
-
-        // Verifica se e uma linha
-        Line* line = dynamic_cast<Line*>(shape);
-
-        if (line != nullptr)
-        {
-            Point p1 = line->getStart();
-            Point p2 = line->getEnd();
-
-            double x1 = p1.getX();
-            double y1 = p1.getY();
-
-            double x2 = p2.getX();
-            double y2 = p2.getY();
-
-            double dx = x2 - x1;
-            double dy = y2 - y1;
-
-            double comprimento2 =
-                dx * dx + dy * dy;
-
-            double t;
-
-            if (comprimento2 == 0)
-            {
-                t = 0;
-            }
-            else
-            {
-                t = ((px - x1) * dx + (py - y1) * dy) / comprimento2;
-            }
-
-            // Mantem o ponto mais proximo dentro do segmento
-            if (t < 0)
-            {
-                t = 0;
-            }
-
-            if (t > 1)
-            {
-                t = 1;
-            }
-
-            double pontoMaisProximoX =
-                x1 + t * dx;
-
-            double pontoMaisProximoY =
-                y1 + t * dy;
-
-            double distanciaX =
-                px - pontoMaisProximoX;
-
-            double distanciaY =
-                py - pontoMaisProximoY;
-
-            double distancia =
-                sqrt(
-                    distanciaX * distanciaX +
-                    distanciaY * distanciaY
-                );
-
-            if (distancia <= maxDistance)
-            {
-                selectedShape = shape;
-                return;
-            }
-        }
-
-        // Verifica se e um circulo
-        Circle* circle =
-            dynamic_cast<Circle*>(shape);
-
-        if (circle != nullptr)
-        {
-            Point center = circle->getXy();
-
-            double dx =
-                px - center.getX();
-
-            double dy =
-                py - center.getY();
-
-            double distanciaCentro =
-                sqrt(dx * dx + dy * dy);
-
-            double distanciaBorda =
-                fabs(
-                    distanciaCentro -
-                    circle->getRadius()
-                );
-
-            if (distanciaBorda <= maxDistance)
-            {
-                selectedShape = shape;
-                return;
-            }
-        }
-
-        // Verifica se e um retangulo
-        Rectangle* rectangle =
-            dynamic_cast<Rectangle*>(shape);
-
-        if (rectangle != nullptr)
-        {
-            Point p =
-                rectangle->getXy();
-
-            double left = p.getX();
-            double right =
-                p.getX() +
-                rectangle->getWidth();
-
-            double top = p.getY();
-            double bottom =
-                p.getY() +
-                rectangle->getHeight();
-
-            // Distancia para cada lado
-            double dLeft =
-                fabs(px - left);
-
-            double dRight =
-                fabs(px - right);
-
-            double dTop =
-                fabs(py - top);
-
-            double dBottom =
-                fabs(py - bottom);
-
-            bool dentroX =
-                px >= left &&
-                px <= right;
-
-            bool dentroY =
-                py >= top &&
-                py <= bottom;
-
-            if ((dLeft <= maxDistance && dentroY) ||
-                    (dRight <= maxDistance && dentroY) ||
-                    (dTop <= maxDistance && dentroX) ||
-                    (dBottom <= maxDistance && dentroX))
-            {
-                selectedShape = shape;
-                return;
-            }
-        }
-
-        // Verifica se e um poligono
-        Polygon* polygon =
-            dynamic_cast<Polygon*>(shape);
-
-        if (polygon != nullptr)
-        {
-            list<Point> pontos =
-                polygon->getPontos();
-
-            if (pontos.size() >= 2)
-            {
-                Point anterior =
-                    pontos.back();
-
-                for (Point atual : pontos)
-                {
-                    double x1 = anterior.getX();
-                    double y1 = anterior.getY();
-
-                    double x2 = atual.getX();
-                    double y2 = atual.getY();
-
-                    double dx = x2 - x1;
-                    double dy = y2 - y1;
-
-                    double comprimento2 =
-                        dx * dx + dy * dy;
-
-                    double t;
-
-                    if (comprimento2 == 0)
-                    {
-                        t = 0;
-                    }
-                    else
-                    {
-                        t = ((px - x1) * dx + (py - y1) * dy) / comprimento2;
-                    }
-
-                    if (t < 0)
-                    {
-                        t = 0;
-                    }
-
-                    if (t > 1)
-                    {
-                        t = 1;
-                    }
-
-                    double pontoX =
-                        x1 + t * dx;
-
-                    double pontoY =
-                        y1 + t * dy;
-
-                    double distanciaX =
-                        px - pontoX;
-
-                    double distanciaY =
-                        py - pontoY;
-
-                    double distancia =
-                        sqrt(
-                            distanciaX * distanciaX +
-                            distanciaY * distanciaY
-                        );
-
-                    if (distancia <= maxDistance)
-                    {
-                        selectedShape = shape;
-                        return;
-                    }
-
-                    anterior = atual;
-                }
-            }
-        }
-
-        // Verifica se e uma curva
-        Curve* curve =
-            dynamic_cast<Curve*>(shape);
-
-        if (curve != nullptr)
-        {
-            Point previous =
-                curve->getPoint(0);
-
-            for (double t = 0.001;
-                    t <= 1.0;
-                    t += 0.001)
-            {
-                double x =
-                    pow(1 - t, 3) *
-                    curve->getPoint(0).getX()
-                    +
-                    3 * pow(1 - t, 2) * t *
-                    curve->getPoint(1).getX()
-                    +
-                    3 * (1 - t) * pow(t, 2) *
-                    curve->getPoint(2).getX()
-                    +
-                    pow(t, 3) *
-                    curve->getPoint(3).getX();
-
-                double y =
-                    pow(1 - t, 3) *
-                    curve->getPoint(0).getY()
-                    +
-                    3 * pow(1 - t, 2) * t *
-                    curve->getPoint(1).getY()
-                    +
-                    3 * (1 - t) * pow(t, 2) *
-                    curve->getPoint(2).getY()
-                    +
-                    pow(t, 3) *
-                    curve->getPoint(3).getY();
-
-                double distanciaX =
-                    px - x;
-
-                double distanciaY =
-                    py - y;
-
-                double distancia =
-                    sqrt(
-                        distanciaX * distanciaX +
-                        distanciaY * distanciaY
-                    );
-
-                if (distancia <= maxDistance)
-                {
-                    selectedShape = shape;
-                    return;
-                }
-
-                previous =
-                    Point((int)x, (int)y);
-            }
+            selectedShape = shapes[i];
+            return;
         }
     }
 
-    // Nenhuma figura encontrada
     selectedShape = nullptr;
 }
 
-// Desenha o indicador visual da seleção
+// Desenha a caixa de seleção usando o Rectangle
+void Canvas::drawBoundingBox(int minX, int minY, int maxX, int maxY, Color color)
+{
+    Rectangle rectangle(Point(minX, minY), maxX - minX, maxY - minY, color);
+    rectangle.draw();
+}
+
+// Desenha a caixa ao redor da figura selecionada
 void Canvas::drawSelectionIndicator()
 {
-    // Se não existe figura selecionada, não faz nada
     if (selectedShape == nullptr)
-    {
         return;
-    }
 
+    int minX, minY, maxX, maxY;
+
+    if (!getShapeBounds(selectedShape, minX, minY, maxX, maxY))
+        return;
+
+    drawBoundingBox(minX - 5, minY - 5, maxX + 5, maxY + 5, Color(0, 0, 255));
+}
+
+// Desenha um controle da seleção
+void Canvas::drawHandle(int x, int y, Color color)
+{
     Line line;
+    int size = 5;
 
-    // Cor utilizada para indicar a selecao
-    Color selectionColor(0, 0, 255);
+    for (int px = x - size; px <= x + size; px++)
+        for (int py = y - size; py <= y + size; py++)
+            line.setPixel(px, py, color);
+}
 
-    Line* selectedLine =
-        dynamic_cast<Line*>(selectedShape);
+// Desenha os controles de escala, rotação e movimentação
+void Canvas::drawSelectionHandles()
+{
+    if (selectedShape == nullptr)
+        return;
 
-    if (selectedLine != nullptr)
+    int minX, minY, maxX, maxY;
+
+    if (!getShapeBounds(selectedShape, minX, minY, maxX, maxY))
+        return;
+
+    Color blue(0, 0, 255);
+
+    drawHandle(minX, minY, blue);
+    drawHandle(maxX, minY, blue);
+    drawHandle(minX, maxY, blue);
+    drawHandle(maxX, maxY, blue);
+
+    int centerX = (minX + maxX) / 2;
+
+    drawHandle(centerX, minY - 25, blue);
+    drawHandle(centerX, maxY + 25, blue);
+}
+
+// Verifica qual controle foi clicado
+Canvas::HandleType Canvas::getHandleAt(int mouseX, int mouseY)
+{
+    if (selectedShape == nullptr)
+        return HANDLE_NONE;
+
+    int minX, minY, maxX, maxY;
+
+    if (!getShapeBounds(selectedShape, minX, minY, maxX, maxY))
+        return HANDLE_NONE;
+
+    int tolerance = 8;
+    int centerX = (minX + maxX) / 2;
+
+    if (std::abs(mouseX - minX) <= tolerance && std::abs(mouseY - minY) <= tolerance)
+        return HANDLE_SCALE_TOP_LEFT;
+
+    if (std::abs(mouseX - maxX) <= tolerance && std::abs(mouseY - minY) <= tolerance)
+        return HANDLE_SCALE_TOP_RIGHT;
+
+    if (std::abs(mouseX - minX) <= tolerance && std::abs(mouseY - maxY) <= tolerance)
+        return HANDLE_SCALE_BOTTOM_LEFT;
+
+    if (std::abs(mouseX - maxX) <= tolerance && std::abs(mouseY - maxY) <= tolerance)
+        return HANDLE_SCALE_BOTTOM_RIGHT;
+
+    if (std::abs(mouseX - centerX) <= tolerance && std::abs(mouseY - (minY - 25)) <= tolerance)
+        return HANDLE_ROTATE;
+
+    if (std::abs(mouseX - centerX) <= tolerance && std::abs(mouseY - (maxY + 25)) <= tolerance)
+        return HANDLE_TRANSLATE;
+
+    return HANDLE_NONE;
+}
+
+// Salva os pontos originais antes da escala
+void Canvas::startScale(HandleType handle, int mouseX, int mouseY)
+{
+    if (selectedShape == nullptr)
+        return;
+
+    int minX, minY, maxX, maxY;
+
+    if (!getShapeBounds(selectedShape, minX, minY, maxX, maxY))
+        return;
+
+    originalScalePoints.clear();
+    originalCurvePoints.clear();
+
+    Polygon* polygon = dynamic_cast<Polygon*>(selectedShape);
+
+    if (polygon != nullptr)
     {
-        Point p1 = selectedLine->getStart();
-        Point p2 = selectedLine->getEnd();
+        std::list<Point> points = polygon->getPontos();
 
-        int minX = std::min(p1.getX(), p2.getX());
-        int maxX = std::max(p1.getX(), p2.getX());
+        for (Point point : points)
+            originalScalePoints.push_back(point);
+    }
 
-        int minY = std::min(p1.getY(), p2.getY());
-        int maxY = std::max(p1.getY(), p2.getY());
+    Curve* curve = dynamic_cast<Curve*>(selectedShape);
 
-        // Espaco para destacar a selecao
-        minX -= 5;
-        maxX += 5;
-        minY -= 5;
-        maxY += 5;
+    if (curve != nullptr)
+    {
+        for (int i = 0; i < 4; i++)
+            originalCurvePoints.push_back(curve->getPoint(i));
+    }
 
-        line.drawWuLine(
-            minX, minY,
-            maxX, minY,
-            selectionColor
-        );
+    originalWidth = maxX - minX;
+    originalHeight = maxY - minY;
 
-        line.drawWuLine(
-            maxX, minY,
-            maxX, maxY,
-            selectionColor
-        );
+    scaleStartMouse = Point(mouseX, mouseY);
 
-        line.drawWuLine(
-            maxX, maxY,
-            minX, maxY,
-            selectionColor
-        );
+    if (handle == HANDLE_SCALE_TOP_LEFT)
+        scaleReference = Point(maxX, maxY);
+    else if (handle == HANDLE_SCALE_TOP_RIGHT)
+        scaleReference = Point(minX, maxY);
+    else if (handle == HANDLE_SCALE_BOTTOM_LEFT)
+        scaleReference = Point(maxX, minY);
+    else if (handle == HANDLE_SCALE_BOTTOM_RIGHT)
+        scaleReference = Point(minX, minY);
+}
 
-        line.drawWuLine(
-            minX, maxY,
-            minX, minY,
-            selectionColor
-        );
+// Atualiza o tamanho da figura durante a escala
+void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
+{
+    if (selectedShape == nullptr || originalWidth <= 0 || originalHeight <= 0)
+        return;
 
+    double newWidth;
+    double newHeight;
+
+    if (handle == HANDLE_SCALE_TOP_LEFT)
+    {
+        newWidth = scaleReference.getX() - mouseX;
+        newHeight = scaleReference.getY() - mouseY;
+    }
+    else if (handle == HANDLE_SCALE_TOP_RIGHT)
+    {
+        newWidth = mouseX - scaleReference.getX();
+        newHeight = scaleReference.getY() - mouseY;
+    }
+    else if (handle == HANDLE_SCALE_BOTTOM_LEFT)
+    {
+        newWidth = scaleReference.getX() - mouseX;
+        newHeight = mouseY - scaleReference.getY();
+    }
+    else if (handle == HANDLE_SCALE_BOTTOM_RIGHT)
+    {
+        newWidth = mouseX - scaleReference.getX();
+        newHeight = mouseY - scaleReference.getY();
+    }
+    else
+    {
         return;
     }
 
-    Circle* selectedCircle =
-        dynamic_cast<Circle*>(selectedShape);
+    newWidth = std::max(5.0, newWidth);
+    newHeight = std::max(5.0, newHeight);
 
-    if (selectedCircle != nullptr)
+    double sx = newWidth / originalWidth;
+    double sy = newHeight / originalHeight;
+
+    Polygon* polygon = dynamic_cast<Polygon*>(selectedShape);
+
+    if (polygon != nullptr)
     {
-        Point center = selectedCircle->getXy();
-        double radius = selectedCircle->getRadius();
-
-        int minX = center.getX() - radius - 5;
-        int maxX = center.getX() + radius + 5;
-
-        int minY = center.getY() - radius - 5;
-        int maxY = center.getY() + radius + 5;
-
-        line.drawWuLine(
-            minX, minY,
-            maxX, minY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            maxX, minY,
-            maxX, maxY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            maxX, maxY,
-            minX, maxY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            minX, maxY,
-            minX, minY,
-            selectionColor
-        );
-
-        return;
-    }
-
-    Rectangle* selectedRectangle =
-        dynamic_cast<Rectangle*>(selectedShape);
-
-    if (selectedRectangle != nullptr)
-    {
-        Point p = selectedRectangle->getXy();
-
-        int minX = p.getX() - 5;
-        int minY = p.getY() - 5;
-
-        int maxX =
-            p.getX() +
-            selectedRectangle->getWidth() +
-            5;
-
-        int maxY =
-            p.getY() +
-            selectedRectangle->getHeight() +
-            5;
-
-        line.drawWuLine(
-            minX, minY,
-            maxX, minY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            maxX, minY,
-            maxX, maxY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            maxX, maxY,
-            minX, maxY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            minX, maxY,
-            minX, minY,
-            selectionColor
-        );
-
-        return;
-    }
-    Polygon* selectedPolygon =
-        dynamic_cast<Polygon*>(selectedShape);
-
-    if (selectedPolygon != nullptr)
-    {
-        list<Point> points =
-            selectedPolygon->getPontos();
-
-        if (points.empty())
-        {
+        if (originalScalePoints.empty())
             return;
-        }
 
-        int minX = points.front().getX();
-        int maxX = points.front().getX();
+        std::list<Point> points;
 
-        int minY = points.front().getY();
-        int maxY = points.front().getY();
+        for (Point point : originalScalePoints)
+            points.push_back(point);
 
-        for (Point p : points)
-        {
-            if (p.getX() < minX)
-                minX = p.getX();
-
-            if (p.getX() > maxX)
-                maxX = p.getX();
-
-            if (p.getY() < minY)
-                minY = p.getY();
-
-            if (p.getY() > maxY)
-                maxY = p.getY();
-        }
-
-        minX -= 5;
-        maxX += 5;
-        minY -= 5;
-        maxY += 5;
-
-        line.drawWuLine(
-            minX, minY,
-            maxX, minY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            maxX, minY,
-            maxX, maxY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            maxX, maxY,
-            minX, maxY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            minX, maxY,
-            minX, minY,
-            selectionColor
-        );
+        polygon->setPontos(points);
+        polygon->scaleFromMouse(sx, sy, scaleReference);
 
         return;
     }
-    Curve* selectedCurve =
-        dynamic_cast<Curve*>(selectedShape);
 
-    if (selectedCurve != nullptr)
+    Curve* curve = dynamic_cast<Curve*>(selectedShape);
+
+    if (curve != nullptr)
     {
-        Point p = selectedCurve->getPoint(0);
+        if (originalCurvePoints.size() != 4)
+            return;
 
-        int minX = p.getX();
-        int maxX = p.getX();
+        for (int i = 0; i < 4; i++)
+            curve->setPoint(i, originalCurvePoints[i]);
 
-        int minY = p.getY();
-        int maxY = p.getY();
-
-        for (int i = 1; i < 4; i++)
-        {
-            Point point =
-                selectedCurve->getPoint(i);
-
-            if (point.getX() < minX)
-                minX = point.getX();
-
-            if (point.getX() > maxX)
-                maxX = point.getX();
-
-            if (point.getY() < minY)
-                minY = point.getY();
-
-            if (point.getY() > maxY)
-                maxY = point.getY();
-        }
-
-        minX -= 5;
-        maxX += 5;
-        minY -= 5;
-        maxY += 5;
-
-        line.drawWuLine(
-            minX, minY,
-            maxX, minY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            maxX, minY,
-            maxX, maxY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            maxX, maxY,
-            minX, maxY,
-            selectionColor
-        );
-
-        line.drawWuLine(
-            minX, maxY,
-            minX, minY,
-            selectionColor
-        );
+        curve->scaleFromMouse(sx, sy, scaleReference);
 
         return;
     }
+
+    int minX, minY, maxX, maxY;
+
+    if (!getShapeBounds(selectedShape, minX, minY, maxX, maxY))
+        return;
+
+    double currentWidth = maxX - minX;
+    double currentHeight = maxY - minY;
+
+    if (currentWidth <= 0 || currentHeight <= 0)
+        return;
+
+    double currentSx = newWidth / currentWidth;
+    double currentSy = newHeight / currentHeight;
+
+    if (currentSx <= 0 || currentSy <= 0)
+        return;
+
+    selectedShape->scaleFromMouse(currentSx, currentSy, scaleReference);
 }

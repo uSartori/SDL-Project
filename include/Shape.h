@@ -1,6 +1,8 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
+#include "Point.h"
+
 // Classe base para todas as figuras geométricas do projeto (funciona como uma interface em java).
 class Shape
 {
@@ -20,6 +22,8 @@ public:
 
     // Verifica se o click do mouse foi proximo da figura
     virtual bool isNear(int x, int y) = 0;
+
+    virtual void scaleFromMouse( double sx, double sy, Point reference) = 0;
 
     virtual ~Shape() = default;
 };

@@ -25,6 +25,8 @@ class Line : public Shape
         void rotate(double angle) override;
         bool isNear(int x, int y) override;
 
+        void scaleFromMouse( double sx, double sy, Point reference) override;
+
         void drawWuLine(int x0, int y0, int x1, int y1, Color color);
         void bresenham(int x1, int y1, int x2, int y2, int r, int g, int b);
 
