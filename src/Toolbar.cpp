@@ -16,7 +16,11 @@ Toolbar::Toolbar(int width, int height) : width(width), height(height)
     buttons.push_back({220, 5, 60, 30, TOOL_CURVE});
     buttons.push_back({290, 5, 60, 30, TOOL_POLYGON});
     buttons.push_back({360, 5, 60, 30, TOOL_FLOOD_FILL});
-    buttons.push_back({430, 5, 80, 30, TOOL_SELECT});
+    buttons.push_back({430, 5, 60, 30, TOOL_SELECT});
+    buttons.push_back({505, 5, 20, 30, TOOL_COLORBLUE});
+    buttons.push_back({540, 5, 20, 30, TOOL_COLORWHITE});
+    buttons.push_back({575, 5, 20, 30, TOOL_COLORBLACK});
+    buttons.push_back({610, 5, 20, 30, TOOL_COLORGREEN});
 }
 
 Toolbar::~Toolbar() {}
@@ -49,11 +53,17 @@ void Toolbar::render()
 {
     Color gray(200, 200, 200);
     Color darkGray(130, 130, 130);
-    Color blue(100, 149, 237);
+    Color select(100, 149, 237);
     Color black(0, 0, 0);
+    Color white(255,255,255);
+    Color green(172,225,175);
+    Color blue(65,105,225);
 
     // Preenche o fundo da Toolbar
     Line line;
+    FloodFill floodFill;
+
+
 
     for (int x = 0; x < width; x++)
     {
@@ -62,12 +72,19 @@ void Toolbar::render()
             line.setPixel(x, y, gray);
         }
     }
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = 39; y < height; y++)
+        {
+            line.setPixel(x, y, darkGray);
+        }
+    }
 
     // Desenha os botões
     for (const auto& btn : buttons)
     {
         Color btnColor =
-            (currentTool == btn.tool) ? blue : darkGray;
+            (currentTool == btn.tool) ? select : darkGray;
 
         Rectangle btnRect(
             Point(btn.x, btn.y),
@@ -182,6 +199,133 @@ void Toolbar::render()
              Curve gotaCurve(curvePts, black);
              gotaCurve.draw();
              break;
+        }
+        case TOOL_COLORBLUE:{
+            for (int x = 506; x <525 ; x++)
+            {
+                for (int y = 6; y < 35; y++)
+                {
+                    line.setPixel(x, y, blue);
+                }
+            }
+
+                          //gota
+              Point gotaTopo(cx, cy - 8);
+              Point lineEsquerda(cx - 6, cy + 4);
+              Point lineDireita(cx + 6, cy + 4);
+
+               //retas
+              Line line1(gotaTopo, lineEsquerda, white);
+              line1.draw();
+
+              Line line2(gotaTopo, lineDireita, white);
+              line2.draw();
+               //curva
+              Point curvePts[4] ={
+                   lineEsquerda,
+                   Point(cx -6, cy + 14),
+                   Point(cx + 9, cy + 12),
+                   lineDireita
+             };
+
+             Curve gotaCurve(curvePts, white);
+             gotaCurve.draw();
+             break;
+
+        }case TOOL_COLORWHITE:{
+            for (int x = 541; x <560 ; x++)
+            {
+                for (int y = 6; y < 35; y++)
+                {
+                    line.setPixel(x, y, white);
+                }
+            }
+                          //gota
+              Point gotaTopo(cx, cy - 8);
+              Point lineEsquerda(cx - 6, cy + 4);
+              Point lineDireita(cx + 6, cy + 4);
+
+               //retas
+              Line line1(gotaTopo, lineEsquerda, black);
+              line1.draw();
+
+              Line line2(gotaTopo, lineDireita, black);
+              line2.draw();
+               //curva
+              Point curvePts[4] ={
+                   lineEsquerda,
+                   Point(cx -6, cy + 14),
+                   Point(cx + 9, cy + 12),
+                   lineDireita
+             };
+
+             Curve gotaCurve(curvePts, black);
+             gotaCurve.draw();
+             break;
+
+        }case TOOL_COLORBLACK:{
+            for (int x = 576; x <595 ; x++)
+            {
+                for (int y = 6; y < 35; y++)
+                {
+                    line.setPixel(x, y, black);
+                }
+            }                          //gota
+              Point gotaTopo(cx, cy - 8);
+              Point lineEsquerda(cx - 6, cy + 4);
+              Point lineDireita(cx + 6, cy + 4);
+
+               //retas
+              Line line1(gotaTopo, lineEsquerda, white);
+              line1.draw();
+
+              Line line2(gotaTopo, lineDireita, white);
+              line2.draw();
+               //curva
+              Point curvePts[4] ={
+                   lineEsquerda,
+                   Point(cx -6, cy + 14),
+                   Point(cx + 9, cy + 12),
+                   lineDireita
+             };
+
+             Curve gotaCurve(curvePts, white);
+             gotaCurve.draw();
+             break;
+
+        }
+        case TOOL_COLORGREEN:{
+            for (int x = 611; x <630 ; x++)
+            {
+                for (int y = 6; y < 35; y++)
+                {
+                    line.setPixel(x, y, green);
+                }
+            }
+
+                          //gota
+              Point gotaTopo(cx, cy - 8);
+              Point lineEsquerda(cx - 6, cy + 4);
+              Point lineDireita(cx + 6, cy + 4);
+
+               //retas
+              Line line1(gotaTopo, lineEsquerda, black);
+              line1.draw();
+
+              Line line2(gotaTopo, lineDireita, black);
+              line2.draw();
+               //curva
+              Point curvePts[4] ={
+                   lineEsquerda,
+                   Point(cx -6, cy + 14),
+                   Point(cx + 9, cy + 12),
+                   lineDireita
+             };
+
+             Curve gotaCurve(curvePts, black);
+             gotaCurve.draw();
+             break;
+
         }
     }
     }

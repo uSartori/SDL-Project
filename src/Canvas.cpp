@@ -551,3 +551,23 @@ void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
 
     selectedShape->scaleFromMouse(currentSx, currentSy, scaleReference);
 }
+void Canvas::deleteSelectedShape()
+{
+    if (selectedShape == nullptr)
+        return;
+
+    auto it = std::find(shapes.begin(), shapes.end(), selectedShape);
+
+    if (it != shapes.end())
+    {
+        delete *it;
+        shapes.erase(it);
+    }
+
+    selectedShape = nullptr;
+}
+
+void Canvas::clearSelection()
+{
+    selectedShape = nullptr;
+}

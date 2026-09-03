@@ -140,6 +140,13 @@ int main()
             // Primeiro a Toolbar trata o evento
             bool clickedUI = toolbar.handleEvent(event);
 
+            if (toolbar.getCurrentTool() != TOOL_SELECT)
+            {
+                canvas.clearSelection();
+                activeHandle = Canvas::HANDLE_NONE;
+                transforming = false;
+            }
+
             if (clickedUI)
                 continue;
 
@@ -212,7 +219,33 @@ int main()
                 // Executa o Flood Fill
                 else if (toolbar.getCurrentTool() == TOOL_FLOOD_FILL)
                 {
-                    canvas.addFloodFill(clickPoint, Color(255, 0, 0));
+
+                    // Colocar if baseasdo na cor selecionada na toolbar
+                    canvas.addFloodFill(clickPoint, Color(173, 216, 230));
+                }
+                else if (toolbar.getCurrentTool() == TOOL_COLORBLACK)
+                {
+
+                    // Colocar if baseasdo na cor selecionada na toolbar
+                    canvas.addFloodFill(clickPoint, Color(0, 0, 0));
+                }
+                else if (toolbar.getCurrentTool() == TOOL_COLORWHITE)
+                {
+
+                    // Colocar if baseasdo na cor selecionada na toolbar
+                    canvas.addFloodFill(clickPoint, Color(255, 255, 255));
+                }
+                else if (toolbar.getCurrentTool() == TOOL_COLORBLUE)
+                {
+
+                    // Colocar if baseasdo na cor selecionada na toolbar
+                    canvas.addFloodFill(clickPoint, Color(65,105,225));
+                }
+                else if (toolbar.getCurrentTool() == TOOL_COLORGREEN)
+                {
+
+                    // Colocar if baseasdo na cor selecionada na toolbar
+                    canvas.addFloodFill(clickPoint, Color(172,225,175));
                 }
             }
 
@@ -320,6 +353,18 @@ int main()
                     canvas.addShape(polygon);
                     polygonPoints.clear();
                 }
+            }
+
+            if (event.type == SDL_KEYDOWN &&
+                event.key.keysym.sym == SDLK_DELETE &&
+                toolbar.getCurrentTool() == TOOL_SELECT)
+            {
+                canvas.deleteSelectedShape();
+
+                activeHandle = Canvas::HANDLE_NONE;
+                transforming = false;
+
+                continue;
             }
         }
 

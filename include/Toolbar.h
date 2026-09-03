@@ -13,7 +13,11 @@ enum ToolType {
     TOOL_CURVE,
     TOOL_POLYGON,
     TOOL_FLOOD_FILL,
-    TOOL_SELECT
+    TOOL_SELECT,
+    TOOL_COLORBLUE,
+    TOOL_COLORWHITE,
+    TOOL_COLORGREEN,
+    TOOL_COLORBLACK
 };
 
 struct ButtonArea{

@@ -476,7 +476,7 @@ bool Line::isNear(int clickX, int clickY)
     }
 
     double t = ((clickX - start.getX()) * dx + (clickY - start.getY()) * dy) / lengthSquared;
-    t = std::max(0.0, std::min(1.0, t));
+    t = std::fmax(0.0, std::fmin(1.0, t));
 
     double closestX = start.getX() + t * dx;
     double closestY = start.getY() + t * dy;

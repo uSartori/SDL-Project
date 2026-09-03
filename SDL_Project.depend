@@ -571,13 +571,13 @@
 	"Color.h"
 	<list>
 
-1788336735 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\circle.cpp
+1788375018 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\circle.cpp
 	"Circle.h"
 	"Line.h"
 	"Transform.h"
 	<cmath>
 
-1788333594 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\circle.h
+1788375018 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\circle.h
 	"Point.h"
 	"Color.h"
 	"Shape.h"
@@ -590,7 +590,7 @@
 1788203969 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\context.h
 	<SDL2/SDL.h>
 
-1788333351 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\line.h
+1788375018 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\line.h
 	<Point.h>
 	<Color.h>
 	<SDL2/SDL.h>
@@ -603,19 +603,19 @@
 1788336713 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\context.cpp
 	"Context.h"
 
-1788336657 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\curve.cpp
+1788375018 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\curve.cpp
 	"Curve.h"
 	"Line.h"
 	"Transform.h"
 	<cmath>
 
-1788333412 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\curve.h
+1788375018 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\curve.h
 	<Point.h>
 	<Color.h>
 	"Shape.h"
 	"Point.h"
 
-1788336597 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\line.cpp
+1788416055 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\line.cpp
 	"Line.h"
 	"Context.h"
 	"Transform.h"
@@ -624,20 +624,20 @@
 1788248502 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\point.cpp
 	"Point.h"
 
-1788336503 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\polygon.cpp
+1788375018 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\polygon.cpp
 	"Polygon.h"
 	"Context.h"
 	"Line.h"
 	"Transform.h"
 	<algorithm>
 
-1788333464 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\polygon.h
+1788375018 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\polygon.h
 	"Point.h"
 	"Color.h"
 	"Shape.h"
 	<list>
 
-1788336455 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\rectangle.cpp
+1788375018 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\rectangle.cpp
 	"Rectangle.h"
 	"Line.h"
 	"Transform.h"
@@ -645,16 +645,16 @@
 	<cmath>
 	<algorithm>
 
-1788333519 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\rectangle.h
+1788375018 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\rectangle.h
 	"Point.h"
 	"Color.h"
 	"Shape.h"
 
-1788336772 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\transform.cpp
+1788375018 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\transform.cpp
 	"Transform.h"
 	<cmath>
 
-1788336346 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
+1788416024 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
 	<SDL2/SDL.h>
 	<stdio.h>
 	<unistd.h>
@@ -673,7 +673,7 @@
 	"Canvas.h"
 	"FloodFill.h"
 
-1788333317 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\shape.h
+1788375018 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\shape.h
 	"Point.h"
 
 1787966178 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\transform.h
@@ -682,21 +682,22 @@
 1787967862 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\shape.cpp
 	"Shape.h"
 
-1788069859 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\toolbar.h
+1788416101 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\toolbar.h
 	<vector>
 	<SDL2/SDL.h>
 	"Rectangle.h"
 	"Color.h"
 
-1788330739 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\toolbar.cpp
+1788416073 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\toolbar.cpp
 	"Toolbar.h"
 	"Line.h"
 	"Circle.h"
 	"Curve.h"
 	"Polygon.h"
 	"Context.h"
+	"FloodFill.h"
 
-1788336175 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\canvas.cpp
+1788416038 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\canvas.cpp
 	"Canvas.h"
 	"Context.h"
 	"Line.h"
@@ -708,7 +709,7 @@
 	<cmath>
 	<algorithm>
 
-1788335994 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\canvas.h
+1788416119 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\canvas.h
 	<vector>
 	<list>
 	"Shape.h"
@@ -892,7 +893,7 @@
 	"Line.h"
 	<cmath>
 
-1788336628 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\floodfill.cpp
+1788375018 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\floodfill.cpp
 	"FloodFill.h"
 	"Context.h"
 	<stack>

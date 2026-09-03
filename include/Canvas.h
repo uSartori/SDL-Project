@@ -38,6 +38,9 @@ public:
     HandleType getHandleAt(int mouseX, int mouseY);
     void startScale(HandleType handle, int mouseX, int mouseY);
     void updateScale(HandleType handle, int mouseX, int mouseY);
+    void deleteSelectedShape();
+    void clearSelection();
+
 
 private:
     struct Fill
