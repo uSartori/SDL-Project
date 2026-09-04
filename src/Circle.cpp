@@ -112,7 +112,7 @@ void Circle::scale(double sx, double sy)
 }
 
 // Rotacao nao altera o circulo
-void Circle::rotate(double angle)
+void Circle::rotate(double angle, Point reference)
 {
 }
 

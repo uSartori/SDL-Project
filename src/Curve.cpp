@@ -2,6 +2,7 @@
 #include "Line.h"
 #include "Transform.h"
 
+#include <algorithm>
 #include <cmath>
 
 // Construtor vazio
@@ -90,11 +91,11 @@ void Curve::scale(double sx, double sy)
     transform.scale(points, 4, sx, sy, points[0]);
 }
 
-// Rotaciona a curva
-void Curve::rotate(double angle)
+// Rotaciona a curva usando o centro da figura como referencia
+void Curve::rotate(double angle, Point reference)
 {
     Transform transform;
-    transform.rotate(points, 4, angle, points[0]);
+    transform.rotate(points, 4, angle, reference);
 }
 
 // Verifica se o clique está perto da curva

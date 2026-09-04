@@ -132,13 +132,13 @@ void Polygon::scale(double sx, double sy)
     delete[] points;
 }
 
-// Rotaciona o poligono usando o primeiro ponto como referencia
-void Polygon::rotate(double angle)
+void Polygon::rotate(double angle, Point reference)
 {
     if (pontos.empty())
         return;
 
     int numPoints = pontos.size();
+
     Point* points = new Point[numPoints];
 
     int i = 0;
@@ -147,7 +147,7 @@ void Polygon::rotate(double angle)
         points[i++] = point;
 
     Transform transform;
-    transform.rotate(points, numPoints, angle, points[0]);
+    transform.rotate(points, numPoints, angle, reference);
 
     pontos.clear();
 

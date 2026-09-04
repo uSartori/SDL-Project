@@ -174,6 +174,10 @@ int main()
                         {
                             canvas.startScale(handle, event.button.x, event.button.y);
                         }
+                        else if (handle == Canvas::HANDLE_ROTATE)
+                        {
+                            canvas.startRotate(event.button.x, event.button.y);
+                        }
                     }
                     else
                     {
@@ -289,10 +293,14 @@ int main()
                     // Rotacao
                     else if (activeHandle == Canvas::HANDLE_ROTATE)
                     {
-                        // Vamos implementar depois
+                        canvas.updateRotate(mouseX, mouseY);
                     }
 
-                    lastMousePosition = Point(mouseX, mouseY);
+                    if (activeHandle == Canvas::HANDLE_TRANSLATE)
+                    {
+                        selectedShape->translate(dx, dy);
+                        lastMousePosition = Point(mouseX, mouseY);
+                    }
                 }
             }
 

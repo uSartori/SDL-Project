@@ -22,6 +22,7 @@ Rectangle::Rectangle(Point xy, double width, double height, Color color)
     this->width = width;
     this->height = height;
     this->color = color;
+    this->rotation = 0;
 }
 
 // Cria um retangulo usando dois pontos
@@ -31,6 +32,7 @@ Rectangle::Rectangle(Point xy0, Point xy1, Color color)
     this->width = xy1.getX() - xy0.getX();
     this->height = xy1.getY() - xy0.getY();
     this->color = color;
+    this->rotation = 0;
 }
 
 // Retorna a posição do retangulo
@@ -77,12 +79,22 @@ void Rectangle::draw()
     Point p3(xy.getX() + width, xy.getY() + height);
     Point p4(xy.getX(), xy.getY() + height);
 
+    Point points[4] = {p1, p2, p3, p4};
+
+    Point center(xy.getX() + width / 2, xy.getY() + height / 2);
+
+    if (rotation != 0)
+    {
+        Transform transform;
+        transform.rotate(points, 4, rotation, center);
+    }
+
     Line line;
 
-    line.drawWuLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), color);
-    line.drawWuLine(p2.getX(), p2.getY(), p3.getX(), p3.getY(), color);
-    line.drawWuLine(p3.getX(), p3.getY(), p4.getX(), p4.getY(), color);
-    line.drawWuLine(p4.getX(), p4.getY(), p1.getX(), p1.getY(), color);
+    line.drawWuLine(points[0].getX(), points[0].getY(), points[1].getX(), points[1].getY(), color);
+    line.drawWuLine(points[1].getX(), points[1].getY(), points[2].getX(), points[2].getY(), color);
+    line.drawWuLine(points[2].getX(), points[2].getY(), points[3].getX(), points[3].getY(), color);
+    line.drawWuLine(points[3].getX(), points[3].getY(), points[0].getX(), points[0].getY(), color);
 }
 
 // Translada o retangulo
@@ -100,25 +112,10 @@ void Rectangle::scale(double sx, double sy)
 }
 
 // Rotaciona o retangulo
-void Rectangle::rotate(double angle)
+// Rotaciona o retangulo em torno do seu centro
+void Rectangle::rotate(double angle, Point reference)
 {
-    Point points[4] = {
-        xy,
-        Point(xy.getX() + width, xy.getY()),
-        Point(xy.getX() + width, xy.getY() + height),
-        Point(xy.getX(), xy.getY() + height)
-    };
-
-    Transform transform;
-    transform.rotate(points, 4, angle, xy);
-
-    xy = points[0];
-
-    width = sqrt(pow(points[1].getX() - points[0].getX(), 2) +
-                 pow(points[1].getY() - points[0].getY(), 2));
-
-    height = sqrt(pow(points[3].getX() - points[0].getX(), 2) +
-                  pow(points[3].getY() - points[0].getY(), 2));
+    rotation += angle * 0.2;
 }
 
 // Verifica se o clique está próximo do retangulo
@@ -186,4 +183,9 @@ void Rectangle::scaleFromMouse(double sx, double sy, Point reference)
     xy = Point(minX, minY);
     width = maxX - minX;
     height = maxY - minY;
+}
+
+double Rectangle::getRotation() const
+{
+    return rotation;
 }

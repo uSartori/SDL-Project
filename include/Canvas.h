@@ -41,6 +41,9 @@ public:
     void deleteSelectedShape();
     void clearSelection();
 
+    void startRotate(int mouseX, int mouseY);
+    void updateRotate(int mouseX, int mouseY);
+
 
 private:
     struct Fill
@@ -68,12 +71,21 @@ private:
     std::vector<Point> originalScalePoints;
     std::vector<Point> originalCurvePoints;
 
+    Point rotationCenter;
+    int rotationStartMouseX;
+    double rotationTotalAngle;
+
+    std::vector<Point> originalRotationPoints;
+    Point originalRotationStart;
+    Point originalRotationEnd;
+
     bool getShapeBounds(Shape* shape, int& minX, int& minY, int& maxX, int& maxY);
     double distanceToSegment(int px, int py, Point p1, Point p2);
     bool isPointNearShape(Shape* shape, int px, int py, double tolerance);
 
     void drawHandle(int x, int y, Color color);
     void drawBoundingBox(int minX, int minY, int maxX, int maxY, Color color);
+
 };
 
 #endif

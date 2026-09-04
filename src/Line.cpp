@@ -449,13 +449,12 @@ void Line::scale(double sx, double sy)
     end = points[1];
 }
 
-// Rotaciona a linha usando o inicio como referencia
-void Line::rotate(double angle)
+void Line::rotate(double angle, Point reference)
 {
     Point points[2] = {start, end};
 
     Transform transform;
-    transform.rotate(points, 2, angle, start);
+    transform.rotate(points, 2, angle, reference);
 
     start = points[0];
     end = points[1];
@@ -508,4 +507,14 @@ void Line::scaleFromMouse(double sx, double sy, Point reference)
 
     start = points[0];
     end = points[1];
+}
+
+void Line::setStart(Point start)
+{
+    this->start = start;
+}
+
+void Line::setEnd(Point end)
+{
+    this->end = end;
 }

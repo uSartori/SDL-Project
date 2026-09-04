@@ -19,10 +19,13 @@ class Line : public Shape
         Point getStart();
         Point getEnd();
 
+        void setStart(Point start);
+        void setEnd(Point end);
+
         void draw() override;
         void translate(double tx, double ty) override;
         void scale(double sx, double sy) override;
-        void rotate(double angle) override;
+        void rotate(double angle, Point reference) override;
         bool isNear(int x, int y) override;
 
         void scaleFromMouse( double sx, double sy, Point reference) override;
@@ -42,7 +45,6 @@ class Line : public Shape
         void setPixel(int x, int y, int r, int g, int b, int a);
         void setPixel(int x, int y, Uint32 cor);
         Uint32 getPixel(int x, int y);
-
 
 };
 
