@@ -15,8 +15,8 @@ Toolbar::Toolbar(int width, int height) : width(width), height(height)
     buttons.push_back({150, 5, 60, 30, TOOL_CIRCLE});
     buttons.push_back({220, 5, 60, 30, TOOL_CURVE});
     buttons.push_back({290, 5, 60, 30, TOOL_POLYGON});
-    buttons.push_back({360, 5, 60, 30, TOOL_FLOOD_FILL});
-    buttons.push_back({430, 5, 60, 30, TOOL_SELECT});
+    buttons.push_back({360, 5, 60, 30, TOOL_SELECT});
+    //buttons.push_back({430, 5, 60, 30, TOOL_FLOOD_FILL});
     buttons.push_back({505, 5, 20, 30, TOOL_COLORBLUE});
     buttons.push_back({540, 5, 20, 30, TOOL_COLORWHITE});
     buttons.push_back({575, 5, 20, 30, TOOL_COLORBLACK});
@@ -176,7 +176,7 @@ void Toolbar::render()
             ponta.draw();
             break;
         }
-        case TOOL_FLOOD_FILL:{
+        /*case TOOL_FLOOD_FILL:{
               //gota
               Point gotaTopo(cx, cy - 8);
               Point lineEsquerda(cx - 6, cy + 4);
@@ -199,7 +199,7 @@ void Toolbar::render()
              Curve gotaCurve(curvePts, black);
              gotaCurve.draw();
              break;
-        }
+        }*/
         case TOOL_COLORBLUE:{
             for (int x = 506; x <525 ; x++)
             {
