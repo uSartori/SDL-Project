@@ -223,32 +223,22 @@ int main()
                 // Executa o Flood Fill
                 else if (toolbar.getCurrentTool() == TOOL_FLOOD_FILL)
                 {
-
-                    // Colocar if baseasdo na cor selecionada na toolbar
                     canvas.addFloodFill(clickPoint, Color(173, 216, 230));
                 }
                 else if (toolbar.getCurrentTool() == TOOL_COLORBLACK)
                 {
-
-                    // Colocar if baseasdo na cor selecionada na toolbar
                     canvas.addFloodFill(clickPoint, Color(0, 0, 0));
                 }
                 else if (toolbar.getCurrentTool() == TOOL_COLORWHITE)
                 {
-
-                    // Colocar if baseasdo na cor selecionada na toolbar
                     canvas.addFloodFill(clickPoint, Color(255, 255, 255));
                 }
                 else if (toolbar.getCurrentTool() == TOOL_COLORBLUE)
                 {
-
-                    // Colocar if baseasdo na cor selecionada na toolbar
                     canvas.addFloodFill(clickPoint, Color(65,105,225));
                 }
                 else if (toolbar.getCurrentTool() == TOOL_COLORGREEN)
                 {
-
-                    // Colocar if baseasdo na cor selecionada na toolbar
                     canvas.addFloodFill(clickPoint, Color(172,225,175));
                 }
             }
@@ -279,9 +269,8 @@ int main()
                     if (activeHandle == Canvas::HANDLE_TRANSLATE)
                     {
                         selectedShape->translate(dx, dy);
+                        lastMousePosition = Point(mouseX, mouseY);
                     }
-
-                    // Escala
                     else if (activeHandle == Canvas::HANDLE_SCALE_TOP_LEFT ||
                              activeHandle == Canvas::HANDLE_SCALE_TOP_RIGHT ||
                              activeHandle == Canvas::HANDLE_SCALE_BOTTOM_LEFT ||
@@ -289,17 +278,9 @@ int main()
                     {
                         canvas.updateScale(activeHandle, mouseX, mouseY);
                     }
-
-                    // Rotacao
                     else if (activeHandle == Canvas::HANDLE_ROTATE)
                     {
                         canvas.updateRotate(mouseX, mouseY);
-                    }
-
-                    if (activeHandle == Canvas::HANDLE_TRANSLATE)
-                    {
-                        selectedShape->translate(dx, dy);
-                        lastMousePosition = Point(mouseX, mouseY);
                     }
                 }
             }

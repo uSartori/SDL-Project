@@ -2,8 +2,8 @@
 #define FLOODFILL_H
 
 #include <SDL2/SDL.h>
-#include "Color.h"
 #include "Point.h"
+#include "Color.h"
 
 class FloodFill
 {
@@ -11,13 +11,10 @@ public:
     FloodFill();
     ~FloodFill();
 
-    void fill(Point startPoint, Color newColor);
-
-private:
     Uint32 getPixel(int x, int y);
-    void setPixel(int x, int y, Color color);
-
+    void setPixel(int x, int y, Uint32 color);
     bool isSameColor(Uint32 color1, Uint32 color2);
+    void fill(Point startPoint, Color newColor);
 };
 
-#endif // FLOODFILL_H
+#endif

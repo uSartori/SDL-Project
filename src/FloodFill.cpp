@@ -1,5 +1,6 @@
 #include "FloodFill.h"
 #include "Context.h"
+
 #include <stack>
 
 // Construtor
@@ -17,90 +18,64 @@ Uint32 FloodFill::getPixel(int x, int y)
 {
     SDL_Surface* surface = Context::getInstance()->getWindowSurface();
 
-    if (surface == nullptr ||
-        x < 0 || x >= surface->w ||
-        y < 0 || y >= surface->h)
-    {
+    if (surface == nullptr || x < 0 || x >= surface->w || y < 0 || y >= surface->h)
         return 0;
-    }
 
     int bpp = surface->format->BytesPerPixel;
     Uint8* p = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
 
-    switch (bpp)
+    if (bpp == 4)
+        return *(Uint32*)p;
+
+    if (bpp == 3)
     {
-        case 1:
-            return *p;
+        if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            return p[0] << 16 | p[1] << 8 | p[2];
 
-        case 2:
-            return *(Uint16*)p;
-
-        case 3:
-            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-                return p[0] << 16 | p[1] << 8 | p[2];
-
-            return p[0] | p[1] << 8 | p[2] << 16;
-
-        case 4:
-            return *(Uint32*)p;
-
-        default:
-            return 0;
+        return p[0] | p[1] << 8 | p[2] << 16;
     }
+
+    if (bpp == 2)
+        return *(Uint16*)p;
+
+    if (bpp == 1)
+        return *p;
+
+    return 0;
 }
 
 // Altera a cor de um pixel
-void FloodFill::setPixel(int x, int y, Color color)
+void FloodFill::setPixel(int x, int y, Uint32 color)
 {
     SDL_Surface* surface = Context::getInstance()->getWindowSurface();
 
-    if (surface == nullptr ||
-        x < 0 || x >= surface->w ||
-        y < 40 || y >= surface->h)
-    {
+    if (surface == nullptr || x < 0 || x >= surface->w || y < 40 || y >= surface->h)
         return;
-    }
-
-    Uint32 pixelColor = SDL_MapRGBA(
-        surface->format,
-        color.getR(),
-        color.getG(),
-        color.getB(),
-        255
-    );
 
     int bpp = surface->format->BytesPerPixel;
     Uint8* p = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
 
-    switch (bpp)
+    if (bpp == 4)
+        *(Uint32*)p = color;
+    else if (bpp == 3)
     {
-        case 1:
-            *p = pixelColor;
-            break;
-
-        case 2:
-            *(Uint16*)p = pixelColor;
-            break;
-
-        case 3:
-            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-            {
-                p[0] = (pixelColor >> 16) & 0xFF;
-                p[1] = (pixelColor >> 8) & 0xFF;
-                p[2] = pixelColor & 0xFF;
-            }
-            else
-            {
-                p[0] = pixelColor & 0xFF;
-                p[1] = (pixelColor >> 8) & 0xFF;
-                p[2] = (pixelColor >> 16) & 0xFF;
-            }
-            break;
-
-        case 4:
-            *(Uint32*)p = pixelColor;
-            break;
+        if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+        {
+            p[0] = (color >> 16) & 0xFF;
+            p[1] = (color >> 8) & 0xFF;
+            p[2] = color & 0xFF;
+        }
+        else
+        {
+            p[0] = color & 0xFF;
+            p[1] = (color >> 8) & 0xFF;
+            p[2] = (color >> 16) & 0xFF;
+        }
     }
+    else if (bpp == 2)
+        *(Uint16*)p = color;
+    else if (bpp == 1)
+        *p = color;
 }
 
 // Verifica se duas cores são iguais
@@ -109,7 +84,7 @@ bool FloodFill::isSameColor(Uint32 color1, Uint32 color2)
     return color1 == color2;
 }
 
-// Preenche uma regiao
+// Preenche uma região usando Scanline Flood Fill
 void FloodFill::fill(Point startPoint, Color newColor)
 {
     SDL_Surface* surface = Context::getInstance()->getWindowSurface();
@@ -121,11 +96,8 @@ void FloodFill::fill(Point startPoint, Color newColor)
     int startY = startPoint.getY();
 
     // O Flood Fill funciona somente no Canvas
-    if (startX < 0 || startX >= surface->w ||
-        startY < 40 || startY >= surface->h)
-    {
+    if (startX < 0 || startX >= surface->w || startY < 40 || startY >= surface->h)
         return;
-    }
 
     Uint32 oldColor = getPixel(startX, startY);
 
@@ -141,7 +113,7 @@ void FloodFill::fill(Point startPoint, Color newColor)
         return;
 
     std::stack<Point> points;
-    points.push(startPoint);
+    points.push(Point(startX, startY));
 
     while (!points.empty())
     {
@@ -151,23 +123,53 @@ void FloodFill::fill(Point startPoint, Color newColor)
         int x = current.getX();
         int y = current.getY();
 
-        // Verifica os limites do Canvas
-        if (x < 0 || x >= surface->w ||
-            y < 40 || y >= surface->h)
+        // Ignora pontos fora do Canvas
+        if (y < 40 || y >= surface->h)
+            continue;
+
+        // Procura o início da linha
+        while (x >= 0 && getPixel(x, y) == oldColor)
+            x--;
+
+        x++;
+
+        bool up = false;
+        bool down = false;
+
+        // Preenche toda a linha
+        while (x < surface->w && getPixel(x, y) == oldColor)
         {
-            continue;
+            setPixel(x, y, fillColor);
+
+            // Verifica a linha de cima
+            if (y > 40)
+            {
+                bool same = getPixel(x, y - 1) == oldColor;
+
+                if (same && !up)
+                {
+                    points.push(Point(x, y - 1));
+                    up = true;
+                }
+                else if (!same)
+                    up = false;
+            }
+
+            // Verifica a linha de baixo
+            if (y < surface->h - 1)
+            {
+                bool same = getPixel(x, y + 1) == oldColor;
+
+                if (same && !down)
+                {
+                    points.push(Point(x, y + 1));
+                    down = true;
+                }
+                else if (!same)
+                    down = false;
+            }
+
+            x++;
         }
-
-        // Ignora pixels de outra cor
-        if (!isSameColor(getPixel(x, y), oldColor))
-            continue;
-
-        setPixel(x, y, newColor);
-
-        // Adiciona os quatro vizinhos
-        points.push(Point(x + 1, y));
-        points.push(Point(x - 1, y));
-        points.push(Point(x, y + 1));
-        points.push(Point(x, y - 1));
     }
 }
