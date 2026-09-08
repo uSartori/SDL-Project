@@ -655,7 +655,7 @@
 	"Transform.h"
 	<cmath>
 
-1788647861 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
+1788892895 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
 	<SDL2/SDL.h>
 	<stdio.h>
 	<unistd.h>
@@ -673,6 +673,7 @@
 	"Toolbar.h"
 	"Canvas.h"
 	"FloodFill.h"
+	"ImageSaver.h"
 
 1788418576 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\shape.h
 	"Point.h"
@@ -919,4 +920,16 @@
 	"FloodFill.h"
 	"Context.h"
 	<stack>
+
+1788892853 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\imagesaver.h
+	<SDL2/SDL.h>
+	<string>
+
+1788892866 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\imagesaver.cpp
+	"ImageSaver.h"
+	<cstdio>
+	<sstream>
+	<chrono>
+	<ctime>
+	<iomanip>
 

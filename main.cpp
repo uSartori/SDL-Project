@@ -18,6 +18,7 @@
 #include "Toolbar.h"
 #include "Canvas.h"
 #include "FloodFill.h"
+#include "ImageSaver.h"
 
 // Controle da curva
 Point curvePoints[4];
@@ -122,6 +123,7 @@ int main()
 
     Canvas canvas(640, 440);
     Toolbar toolbar(640, 40);
+    ImageSaver imageSaver;
 
     while (1)
     {
@@ -353,6 +355,11 @@ int main()
                 activeHandle = Canvas::HANDLE_NONE;
                 transforming = false;
 
+                continue;
+            }
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_s && (SDL_GetModState() & KMOD_CTRL))
+            {
+                imageSaver.saveFile(window_surface, 0, 40, 640, 440);
                 continue;
             }
         }
