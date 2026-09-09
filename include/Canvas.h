@@ -86,6 +86,11 @@ private:
     void drawHandle(int x, int y, Color color);
     void drawBoundingBox(int minX, int minY, int maxX, int maxY, Color color);
 
+    Point originalRectXy;
+    double originalRectWidth;
+    double originalRectHeight;
+    double originalRectRotation;
+
 };
 
 #endif

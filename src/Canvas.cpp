@@ -495,6 +495,14 @@ void Canvas::startScale(HandleType handle, int mouseX, int mouseY)
     if (selectedShape == nullptr)
         return;
 
+    if (Rectangle* rect = dynamic_cast<Rectangle*>(selectedShape))
+    {
+        originalRectXy = rect->getXy();
+        originalRectWidth = rect->getWidth();
+        originalRectHeight = rect->getHeight();
+        originalRectRotation = rect->getRotation();
+    }
+
     int minX, minY, maxX, maxY;
 
     if (!getShapeBounds(selectedShape, minX, minY, maxX, maxY))
@@ -552,13 +560,24 @@ void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
     w = std::max(12.0, w);
     h = std::max(12.0, h);
 
-    // Calcula quanto a figura precisa aumentar ou diminuir
-    // Por exemplo, se a largura original era 100 e a nova é 200, sx será 2
+    // Calcula quanto a figura precisa aumentar ou diminuir em relação ao tamanho original
     double sx = w / originalWidth;
     double sy = h / originalHeight;
 
+    // Se a figura selecionada for um Retângulo:
+    if (Rectangle* rect = dynamic_cast<Rectangle*>(selectedShape))
+    {
+        // 1. Restaura o estado original capturado no startScale
+        rect->setXy(originalRectXy);
+        rect->setWidth(originalRectWidth);
+        rect->setHeight(originalRectHeight);
+
+        // 2. Aplica a nova escala a partir do estado original fixo
+        rect->scale(sx, sy, scaleReference);
+        return;
+    }
+
     // Polígonos precisam voltar aos pontos originais antes de aplicar a nova escala
-    // Isso evita que a escala seja acumulada várias vezes enquanto o mouse é movimentado
     if (Polygon* polygon = dynamic_cast<Polygon*>(selectedShape))
     {
         std::list<Point> points(originalScalePoints.begin(), originalScalePoints.end());
@@ -580,6 +599,7 @@ void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
         return;
     }
 
+    // Código fallback para outras formas
     int minX, minY, maxX, maxY;
 
     if (!getShapeBounds(selectedShape, minX, minY, maxX, maxY))
@@ -591,7 +611,6 @@ void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
     if (cw <= 0 || ch <= 0)
         return;
 
-    // Aplica a escala usando o ponto de referência escolhido no início
     selectedShape->scale(w / cw, h / ch, scaleReference);
 }
 

@@ -104,8 +104,22 @@ void Rectangle::translate(double tx, double ty)
     xy.setY(xy.getY() + ty);
 }
 
-// Escala o retangulo usando um ponto de referencia
+// Escala o retangulo considerando sua rotação atual
 void Rectangle::scale(double sx, double sy, Point reference)
+{
+    // Aplica a escala nas dimensões locais
+    width *= sx;
+    height *= sy;
+
+    // Calcula o vetor de translação da origem 'xy' em relação à referência
+    double dx = xy.getX() - reference.getX();
+    double dy = xy.getY() - reference.getY();
+
+    // Atualiza a posição mantendo o correto deslocamento
+    xy.setX(reference.getX() + dx * sx);
+    xy.setY(reference.getY() + dy * sy);
+}
+/*void Rectangle::scale(double sx, double sy, Point reference)
 {
     Point points[4] = {
         Point(xy.getX(), xy.getY()),
@@ -133,7 +147,7 @@ void Rectangle::scale(double sx, double sy, Point reference)
     xy = Point(minX, minY);
     width = maxX - minX;
     height = maxY - minY;
-}
+}*/
 
 // Rotaciona o retangulo
 // Rotaciona o retangulo em torno do seu centro
@@ -183,6 +197,33 @@ bool Rectangle::isPointNearLine(int clickX, int clickY, Point a, Point b)
 // Verifica se o clique está próximo do retangulo
 bool Rectangle::isNear(int clickX, int clickY)
 {
+    Point p = xy;
+
+    // Centro do retângulo
+    double cx = p.getX() + width / 2.0;
+    double cy = p.getY() + height / 2.0;
+
+    // Desfaz a rotação no ponto do clique para testar em espaço local
+    double a = -rotation * M_PI / 180.0;
+
+    double dx = clickX - cx;
+    double dy = clickY - cy;
+
+    double lx = dx * cos(a) - dy * sin(a) + cx;
+    double ly = dx * sin(a) + dy * cos(a) + cy;
+
+    Point p1 = xy;
+    Point p2(xy.getX() + width, xy.getY());
+    Point p3(xy.getX() + width, xy.getY() + height);
+    Point p4(xy.getX(), xy.getY() + height);
+
+    return isPointNearLine(lx, ly, p1, p2) ||
+           isPointNearLine(lx, ly, p2, p3) ||
+           isPointNearLine(lx, ly, p3, p4) ||
+           isPointNearLine(lx, ly, p4, p1);
+}
+/*bool Rectangle::isNear(int clickX, int clickY)
+{
     // Cria os quatro pontos que representam os cantos do retângulo
     Point p1 = xy;
     Point p2(xy.getX() + width, xy.getY());
@@ -195,7 +236,7 @@ bool Rectangle::isNear(int clickX, int clickY)
            isPointNearLine(clickX, clickY, p2, p3) ||
            isPointNearLine(clickX, clickY, p3, p4) ||
            isPointNearLine(clickX, clickY, p4, p1);
-}
+}*/
 
 double Rectangle::getRotation() const
 {
