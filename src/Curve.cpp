@@ -85,10 +85,10 @@ void Curve::translate(double tx, double ty)
 }
 
 // Escala a curva
-void Curve::scale(double sx, double sy)
+void Curve::scale(double sx, double sy, Point reference)
 {
     Transform transform;
-    transform.scale(points, 4, sx, sy, points[0]);
+    transform.scale(points, 4, sx, sy, reference);
 }
 
 // Rotaciona a curva usando o centro da figura como referencia
@@ -123,11 +123,4 @@ bool Curve::isNear(int clickX, int clickY)
     }
 
     return false;
-}
-
-// Escala a curva usando um ponto de referencia
-void Curve::scaleFromMouse(double sx, double sy, Point reference)
-{
-    Transform transform;
-    transform.scale(points, 4, sx, sy, reference);
 }

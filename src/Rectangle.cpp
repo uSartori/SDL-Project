@@ -104,11 +104,35 @@ void Rectangle::translate(double tx, double ty)
     xy.setY(xy.getY() + ty);
 }
 
-// Escala o retangulo usando seu ponto inicial como referencia
-void Rectangle::scale(double sx, double sy)
+// Escala o retangulo usando um ponto de referencia
+void Rectangle::scale(double sx, double sy, Point reference)
 {
-    width *= sx;
-    height *= sy;
+    Point points[4] = {
+        Point(xy.getX(), xy.getY()),
+        Point(xy.getX() + width, xy.getY()),
+        Point(xy.getX() + width, xy.getY() + height),
+        Point(xy.getX(), xy.getY() + height)
+    };
+
+    Transform transform;
+    transform.scale(points, 4, sx, sy, reference);
+
+    int minX = points[0].getX();
+    int minY = points[0].getY();
+    int maxX = points[0].getX();
+    int maxY = points[0].getY();
+
+    for (int i = 1; i < 4; i++)
+    {
+        minX = std::min(minX, points[i].getX());
+        minY = std::min(minY, points[i].getY());
+        maxX = std::max(maxX, points[i].getX());
+        maxY = std::max(maxY, points[i].getY());
+    }
+
+    xy = Point(minX, minY);
+    width = maxX - minX;
+    height = maxY - minY;
 }
 
 // Rotaciona o retangulo
@@ -152,37 +176,6 @@ bool Rectangle::isNear(int clickX, int clickY)
     };
 
     return nearLine(p1, p2) || nearLine(p2, p3) || nearLine(p3, p4) || nearLine(p4, p1);
-}
-
-// Escala o retangulo usando um ponto de referencia
-void Rectangle::scaleFromMouse(double sx, double sy, Point reference)
-{
-    Point points[4] = {
-        Point(xy.getX(), xy.getY()),
-        Point(xy.getX() + width, xy.getY()),
-        Point(xy.getX() + width, xy.getY() + height),
-        Point(xy.getX(), xy.getY() + height)
-    };
-
-    Transform transform;
-    transform.scale(points, 4, sx, sy, reference);
-
-    int minX = points[0].getX();
-    int minY = points[0].getY();
-    int maxX = points[0].getX();
-    int maxY = points[0].getY();
-
-    for (int i = 1; i < 4; i++)
-    {
-        minX = std::min(minX, points[i].getX());
-        minY = std::min(minY, points[i].getY());
-        maxX = std::max(maxX, points[i].getX());
-        maxY = std::max(maxY, points[i].getY());
-    }
-
-    xy = Point(minX, minY);
-    width = maxX - minX;
-    height = maxY - minY;
 }
 
 double Rectangle::getRotation() const

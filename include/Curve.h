@@ -21,10 +21,9 @@ public:
     void draw();
 
     void translate(double tx, double ty);
-    void scale(double sx, double sy);
+    void scale( double sx, double sy, Point reference) override;
     void rotate(double angle,Point reference);
     bool isNear(int x, int y) override;
-    void scaleFromMouse( double sx, double sy, Point reference) override;
 
     virtual ~Curve();
 

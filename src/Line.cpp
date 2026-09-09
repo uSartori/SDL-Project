@@ -430,13 +430,13 @@ void Line::translate(double tx, double ty)
     end = points[1];
 }
 
-// Escala a linha usando o inicio como referencia
-void Line::scale(double sx, double sy)
+// Escala a linha usando um ponto de referencia
+void Line::scale(double sx, double sy, Point reference)
 {
     Point points[2] = {start, end};
 
     Transform transform;
-    transform.scale(points, 2, sx, sy, start);
+    transform.scale(points, 2, sx, sy, reference);
 
     start = points[0];
     end = points[1];
@@ -488,18 +488,6 @@ Point Line::getStart()
 Point Line::getEnd()
 {
     return end;
-}
-
-// Escala a linha usando um ponto de referencia
-void Line::scaleFromMouse(double sx, double sy, Point reference)
-{
-    Point points[2] = {start, end};
-
-    Transform transform;
-    transform.scale(points, 2, sx, sy, reference);
-
-    start = points[0];
-    end = points[1];
 }
 
 void Line::setStart(Point start)

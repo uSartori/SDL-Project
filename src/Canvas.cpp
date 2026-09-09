@@ -452,7 +452,7 @@ void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
     {
         std::list<Point> points(originalScalePoints.begin(), originalScalePoints.end());
         polygon->setPontos(points);
-        polygon->scaleFromMouse(sx, sy, scaleReference);
+        polygon->scale(sx, sy, scaleReference);
         return;
     }
 
@@ -464,7 +464,7 @@ void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
         for (int i = 0; i < 4; i++)
             curve->setPoint(i, originalCurvePoints[i]);
 
-        curve->scaleFromMouse(sx, sy, scaleReference);
+        curve->scale(sx, sy, scaleReference);
         return;
     }
 
@@ -479,7 +479,7 @@ void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
     if (cw <= 0 || ch <= 0)
         return;
 
-    selectedShape->scaleFromMouse(w / cw, h / ch, scaleReference);
+    selectedShape->scale(w / cw, h / ch, scaleReference);
 }
 
 // Deleta a seleção

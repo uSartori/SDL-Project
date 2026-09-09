@@ -107,8 +107,8 @@ void Polygon::translate(double tx, double ty)
     delete[] points;
 }
 
-// Escala o poligono usando o primeiro ponto como referencia
-void Polygon::scale(double sx, double sy)
+// Escala o poligono usando um ponto de referencia
+void Polygon::scale(double sx, double sy, Point reference)
 {
     if (pontos.empty())
         return;
@@ -122,7 +122,7 @@ void Polygon::scale(double sx, double sy)
         points[i++] = point;
 
     Transform transform;
-    transform.scale(points, numPoints, sx, sy, points[0]);
+    transform.scale(points, numPoints, sx, sy, reference);
 
     pontos.clear();
 
@@ -199,29 +199,4 @@ bool Polygon::isNear(int clickX, int clickY)
     }
 
     return nearLine(previous, first);
-}
-
-// Escala o poligono usando um ponto de referencia
-void Polygon::scaleFromMouse(double sx, double sy, Point reference)
-{
-    if (pontos.empty())
-        return;
-
-    int numPoints = pontos.size();
-    Point* points = new Point[numPoints];
-
-    int i = 0;
-
-    for (Point point : pontos)
-        points[i++] = point;
-
-    Transform transform;
-    transform.scale(points, numPoints, sx, sy, reference);
-
-    pontos.clear();
-
-    for (i = 0; i < numPoints; i++)
-        pontos.push_back(points[i]);
-
-    delete[] points;
 }

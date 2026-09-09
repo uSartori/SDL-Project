@@ -20,10 +20,10 @@ public:
 
     void draw() override;
     void translate(double tx, double ty) override;
-    void scale(double sx, double sy) override;
+    void scale(double sx, double sy, Point reference) override;
     void rotate(double angle, Point reference) override;
     bool isNear(int x, int y) override;
-    void scaleFromMouse( double sx, double sy, Point reference) override;
+
 
     void drawBresenhamCircle(Point xy, double radius, Color cor);
 

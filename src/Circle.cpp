@@ -105,15 +105,16 @@ void Circle::translate(double tx, double ty)
     xy.setY(xy.getY() + ty);
 }
 
-// Escala o circulo
-void Circle::scale(double sx, double sy)
-{
-    radius *= sx;
-}
-
 // Rotacao nao altera o circulo
 void Circle::rotate(double angle, Point reference)
 {
+}
+
+// Escala o circulo
+void Circle::scale(double sx, double sy, Point reference)
+{
+    double scaleFactor = (sx + sy) / 2.0;
+    radius *= scaleFactor;
 }
 
 // Verifica se o clique está perto do circulo
@@ -125,18 +126,4 @@ bool Circle::isNear(int clickX, int clickY)
     double distance = sqrt(dx * dx + dy * dy);
 
     return fabs(distance - radius) <= 5.0;
-}
-
-// Escala o circulo usando um ponto de referencia
-void Circle::scaleFromMouse(double sx, double sy, Point reference)
-{
-    double scaleFactor = (sx + sy) / 2.0;
-
-    Point point = xy;
-
-    Transform transform;
-    transform.scale(&point, 1, scaleFactor, scaleFactor, reference);
-
-    xy = point;
-    radius *= scaleFactor;
 }

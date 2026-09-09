@@ -24,11 +24,9 @@ class Line : public Shape
 
         void draw() override;
         void translate(double tx, double ty) override;
-        void scale(double sx, double sy) override;
+        void scale( double sx, double sy, Point reference) override;
         void rotate(double angle, Point reference) override;
         bool isNear(int x, int y) override;
-
-        void scaleFromMouse( double sx, double sy, Point reference) override;
 
         void drawWuLine(int x0, int y0, int x1, int y1, Color color);
         void bresenham(int x1, int y1, int x2, int y2, int r, int g, int b);

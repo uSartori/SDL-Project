@@ -15,15 +15,13 @@ public:
     virtual void translate(double tx, double ty) = 0;
 
     // Altera o tamanho da figura.
-    virtual void scale(double sx, double sy) = 0;
+    virtual void scale( double sx, double sy, Point reference) = 0;
 
     // Rotaciona a figura pelo ângulo informado em graus.
     virtual void rotate(double angle, Point reference) = 0;
 
     // Verifica se o click do mouse foi proximo da figura
     virtual bool isNear(int x, int y) = 0;
-
-    virtual void scaleFromMouse( double sx, double sy, Point reference) = 0;
 
     virtual ~Shape() = default;
 };
