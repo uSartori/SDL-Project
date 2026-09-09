@@ -114,35 +114,28 @@ void Line::draw()
 
 Uint32 Line::getPixel(int x, int y)
 {
-    SDL_Surface * window_surface = Context::getInstance()->getWindowSurface();
+    SDL_Surface* window_surface = Context::getInstance()->getWindowSurface();
+
+    if (x < 0 || x >= window_surface->w || y < 0 || y >= window_surface->h)
+        return 0;
 
     int bpp = window_surface->format->BytesPerPixel;
-    /* Here p is the address to the pixel we want to retrieve */
-    Uint8 *p = (Uint8 *) window_surface->pixels + y * window_surface->pitch + x * bpp;
+    Uint8* p = (Uint8*)window_surface->pixels + y * window_surface->pitch + x * bpp;
 
     switch (bpp)
     {
     case 1:
         return *p;
-        break;
-
     case 2:
-        return *(Uint16 *)p;
-        break;
-
+        return *(Uint16*)p;
     case 3:
         if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
             return p[0] << 16 | p[1] << 8 | p[2];
-        else
-            return p[0] | p[1] << 8 | p[2] << 16;
-        break;
-
+        return p[0] | p[1] << 8 | p[2] << 16;
     case 4:
-        return *(Uint32 *)p;
-        break;
-
+        return *(Uint32*)p;
     default:
-        return 0;       /* shouldn't happen, but avoids warnings */
+        return 0;
     }
 }
 

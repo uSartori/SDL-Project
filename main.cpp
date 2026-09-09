@@ -125,6 +125,11 @@ int main()
     Toolbar toolbar(640, 40);
     ImageSaver imageSaver;
 
+    printf("======== Observacoes ========\n");
+    printf("Botao direito conclui o poligono apos tres ou mais pontos\n");
+    printf("Delete apaga a figura selecionada\n");
+    printf("Ctrl + S salva a imagem do canvas\n");
+
     while (1)
     {
         canvas.clear();

@@ -43,6 +43,7 @@ bool ImageSaver::saveFile(SDL_Surface* surface, int x, int y, int width, int hei
         return false;
     }
 
+    // Usar "HOME" se for Linux
     const char* home = getenv("USERPROFILE");
 
     if (home == nullptr)

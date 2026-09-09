@@ -655,7 +655,7 @@
 	"Transform.h"
 	<cmath>
 
-1788892895 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
+1788928589 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
 	<SDL2/SDL.h>
 	<stdio.h>
 	<unistd.h>
@@ -925,7 +925,7 @@
 	<SDL2/SDL.h>
 	<string>
 
-1788892866 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\imagesaver.cpp
+1788928166 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\imagesaver.cpp
 	"ImageSaver.h"
 	<cstdio>
 	<sstream>
