@@ -625,20 +625,20 @@
 1788248502 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\point.cpp
 	"Point.h"
 
-1788931508 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\polygon.cpp
+1788976836 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\polygon.cpp
 	"Polygon.h"
 	"Context.h"
 	"Line.h"
 	"Transform.h"
 	<algorithm>
 
-1788931658 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\polygon.h
+1788976860 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\polygon.h
 	"Point.h"
 	"Color.h"
 	"Shape.h"
 	<list>
 
-1788931804 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\rectangle.cpp
+1788979887 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\rectangle.cpp
 	"Rectangle.h"
 	"Line.h"
 	"Transform.h"
@@ -646,7 +646,7 @@
 	<cmath>
 	<algorithm>
 
-1788931676 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\rectangle.h
+1788979911 c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\include\rectangle.h
 	"Point.h"
 	"Color.h"
 	"Shape.h"
@@ -655,7 +655,7 @@
 	"Transform.h"
 	<cmath>
 
-1788928589 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
+1788980104 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\main.cpp
 	<SDL2/SDL.h>
 	<stdio.h>
 	<unistd.h>
@@ -690,7 +690,7 @@
 	"Rectangle.h"
 	"Color.h"
 
-1788565708 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\toolbar.cpp
+1788980258 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\toolbar.cpp
 	"Toolbar.h"
 	"Line.h"
 	"Circle.h"
@@ -699,7 +699,7 @@
 	"Context.h"
 	"FloodFill.h"
 
-1788936097 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\canvas.cpp
+1788979979 source:c:\users\administrador\documents\programação\projetocompgrafica\sdl_project\src\canvas.cpp
 	"Canvas.h"
 	"Context.h"
 	"Line.h"

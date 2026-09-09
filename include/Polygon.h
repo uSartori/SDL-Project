@@ -36,6 +36,7 @@ protected:
 private:
     list<Point> pontos;
     Color color;
+    bool isPointNearLine(int clickX, int clickY, Point a, Point b);
 };
 
 #endif // POLYGON_H

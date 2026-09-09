@@ -141,41 +141,60 @@ void Rectangle::rotate(double angle, Point reference)
 {
     rotation += angle * 0.2;
 }
+// Verifica se um ponto está próximo de um segmento de reta
+bool Rectangle::isPointNearLine(int clickX, int clickY, Point a, Point b)
+{
+    // Calcula o vetor que representa o segmento
+    double dx = b.getX() - a.getX();
+    double dy = b.getY() - a.getY();
+
+    // Calcula o comprimento do segmento ao quadrado
+    double lengthSquared = dx * dx + dy * dy;
+
+    // Verifica se os dois pontos são iguais
+    if (lengthSquared == 0)
+    {
+        // Calcula a diferença entre o clique e o ponto
+        double px = clickX - a.getX();
+        double py = clickY - a.getY();
+
+        // Aceita o clique se estiver a no máximo 5 pixels do ponto
+        return px * px + py * py <= 25;
+    }
+
+    // Calcula a posição do ponto mais próximo do clique sobre o segmento
+    double t = ((clickX - a.getX()) * dx + (clickY - a.getY()) * dy) / lengthSquared;
+
+    // Limita o valor entre 0 e 1 para considerar somente o segmento
+    t = std::max(0.0, std::min(1.0, t));
+
+    // Calcula as coordenadas do ponto mais próximo do clique
+    double closestX = a.getX() + t * dx;
+    double closestY = a.getY() + t * dy;
+
+    // Calcula a diferença entre o clique e o ponto mais próximo
+    double distanceX = clickX - closestX;
+    double distanceY = clickY - closestY;
+
+    // Verifica se o clique está a até 5 pixels do segmento
+    return distanceX * distanceX + distanceY * distanceY <= 25;
+}
 
 // Verifica se o clique está próximo do retangulo
 bool Rectangle::isNear(int clickX, int clickY)
 {
+    // Cria os quatro pontos que representam os cantos do retângulo
     Point p1 = xy;
     Point p2(xy.getX() + width, xy.getY());
     Point p3(xy.getX() + width, xy.getY() + height);
     Point p4(xy.getX(), xy.getY() + height);
 
-    auto nearLine = [clickX, clickY](Point a, Point b)
-    {
-        double dx = b.getX() - a.getX();
-        double dy = b.getY() - a.getY();
-        double lengthSquared = dx * dx + dy * dy;
-
-        if (lengthSquared == 0)
-        {
-            double px = clickX - a.getX();
-            double py = clickY - a.getY();
-            return px * px + py * py <= 25;
-        }
-
-        double t = ((clickX - a.getX()) * dx + (clickY - a.getY()) * dy) / lengthSquared;
-
-        t = std::max(0.0, std::min(1.0, t));
-
-        double closestX = a.getX() + t * dx;
-        double closestY = a.getY() + t * dy;
-        double distanceX = clickX - closestX;
-        double distanceY = clickY - closestY;
-
-        return distanceX * distanceX + distanceY * distanceY <= 25;
-    };
-
-    return nearLine(p1, p2) || nearLine(p2, p3) || nearLine(p3, p4) || nearLine(p4, p1);
+    // Verifica os quatro lados do retângulo
+    // Se o clique estiver próximo de qualquer lado, considera que o retângulo foi selecionado
+    return isPointNearLine(clickX, clickY, p1, p2) ||
+           isPointNearLine(clickX, clickY, p2, p3) ||
+           isPointNearLine(clickX, clickY, p3, p4) ||
+           isPointNearLine(clickX, clickY, p4, p1);
 }
 
 double Rectangle::getRotation() const

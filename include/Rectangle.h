@@ -39,6 +39,8 @@ private:
     double height;
     double rotation;
     Color color;
+
+    bool isPointNearLine(int clickX, int clickY, Point a, Point b);
 };
 
 #endif // RECTANGULE_H
