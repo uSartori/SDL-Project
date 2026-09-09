@@ -442,8 +442,8 @@ void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
     if (w <= 0 || h <= 0)
         return;
 
-    w = std::max(5.0, w);
-    h = std::max(5.0, h);
+    w = std::max(12.0, w);
+    h = std::max(12.0, h);
 
     double sx = w / originalWidth;
     double sy = h / originalHeight;
