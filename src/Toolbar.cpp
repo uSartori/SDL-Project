@@ -20,7 +20,6 @@ Toolbar::Toolbar(int width, int height) : width(width), height(height)
     buttons.push_back({220, 5, 60, 30, TOOL_CURVE});
     buttons.push_back({290, 5, 60, 30, TOOL_POLYGON});
     buttons.push_back({360, 5, 60, 30, TOOL_SELECT});
-    //buttons.push_back({430, 5, 60, 30, TOOL_FLOOD_FILL});
 
     // Cria os botões utilizados para selecionar a cor
     buttons.push_back({505, 5, 20, 30, TOOL_COLORBLUE});
@@ -224,38 +223,6 @@ void Toolbar::render()
             break;
         }
 
-        /*
-        // Ícone antigo da ferramenta Flood Fill
-        // Foi mantido comentado caso seja necessário reutilizá-lo
-        case TOOL_FLOOD_FILL:
-        {
-            // Define o ponto superior e os pontos laterais da gota
-            Point gotaTopo(cx, cy - 8);
-            Point lineEsquerda(cx - 6, cy + 4);
-            Point lineDireita(cx + 6, cy + 4);
-
-            // Desenha as duas laterais
-            Line line1(gotaTopo, lineEsquerda, black);
-            line1.draw();
-
-            Line line2(gotaTopo, lineDireita, black);
-            line2.draw();
-
-            // Cria a parte inferior arredondada com uma curva de Bezier
-            Point curvePts[4] = {
-                lineEsquerda,
-                Point(cx - 6, cy + 14),
-                Point(cx + 9, cy + 12),
-                lineDireita
-            };
-
-            Curve gotaCurve(curvePts, black);
-            gotaCurve.draw();
-
-            break;
-        }
-        */
-
         // Botão da cor azul
         case TOOL_COLORBLUE:
         {
@@ -329,6 +296,10 @@ void Toolbar::render()
             gotaCurve.draw();
 
             break;
+        }
+        case TOOL_FLOOD_FILL:
+        {
+                break;
         }
 
         // Botão da cor preta

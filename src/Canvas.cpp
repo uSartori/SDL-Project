@@ -567,12 +567,12 @@ void Canvas::updateScale(HandleType handle, int mouseX, int mouseY)
     // Se a figura selecionada for um Retângulo:
     if (Rectangle* rect = dynamic_cast<Rectangle*>(selectedShape))
     {
-        // 1. Restaura o estado original capturado no startScale
+        // Restaura o estado original capturado no startScale
         rect->setXy(originalRectXy);
         rect->setWidth(originalRectWidth);
         rect->setHeight(originalRectHeight);
 
-        // 2. Aplica a nova escala a partir do estado original fixo
+        // Aplica a nova escala a partir do estado original fixo
         rect->scale(sx, sy, scaleReference);
         return;
     }
