@@ -8,3 +8,7 @@ obj/
 # Arquivos objeto
 *.o
 *.obj
+
+# Arquivos gerados pelo Code::Blocks 
+*.depend 
+*.layout
